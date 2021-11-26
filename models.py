@@ -4,9 +4,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 from language_model import tfidf_loading, WordEmbedding, SentenceEmbedding
-from attention import StackedAttention, BiAttention
-from bc import BCNet
-from fc import FCNet
+from attention.san.attention import StackedAttention
+from attention.san.bc import BCNet
+from attention.san.fc import FCNet
 import cv2
 
 def normalized_columns_initializer(weights, std=1.0):
@@ -52,16 +52,6 @@ class A3C_LSTM_GA(torch.nn.Module):
         #attention
         if args.attention == 'san':
             self.v_att = StackedAttention(2, 64*8*17, 256 , 256, 2, 0.0) #dropout=0.5
-        elif args.attention == 'ban':
-            self.v_att = BiAttention(256, 256, 256, args.glimpse)
-            # init BAN residual network
-            self.b_net = []
-            self.q_prj = []
-            for i in range(args.glimpse): #glimpse
-                self.b_net.append(BCNet(256, 256, 256, None, k=1))
-                self.q_prj.append(FCNet([256, 256], '', .2))
-            self.b_net = nn.ModuleList(self.b_net)
-            self.q_prj = nn.ModuleList(self.q_prj)
 
         # Image Processing
         # self.conv1 = nn.Conv2d(3, 128, kernel_size=8, stride=4) 
@@ -128,9 +118,6 @@ class A3C_LSTM_GA(torch.nn.Module):
 
         if self.args.attention == "san":
             s_emb = self.s_emb(w_emb)
-        elif self.args.attention == "ban":
-            s_emb = self.s_emb.forward_all(w_emb)
-            x_emb = x_emb.view(1, 34, s_emb.size(2))
 
         # with open("s_w_emb.txt", "a+") as f:
         #     f.write("{}\n".format(s_emb.cpu().detach().clone().numpy()[0]))  
@@ -138,14 +125,6 @@ class A3C_LSTM_GA(torch.nn.Module):
         # exit()
         if self.args.attention == "san":
             att = self.v_att(x_emb, s_emb, v_mask=False)
-        elif self.args.attention == "ban":
-            b_emb = [0] * self.args.glimpse
-            att, logits = self.v_att.forward_all(x_emb, s_emb) # b x g x v x q
-            for g in range(self.args.glimpse):
-                b_emb[g] = self.b_net[g].forward_with_weights(x_emb, s_emb, att[:,g,:,:]) # b x l x h
-                atten, _ = logits[:,g,:,:].max(2)
-                s_emb = self.q_prj[g](b_emb[g].unsqueeze(1)) + s_emb
-            att = s_emb.sum(1)
         
         x = att
         
