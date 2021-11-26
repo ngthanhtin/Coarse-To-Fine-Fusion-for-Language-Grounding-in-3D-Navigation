@@ -15,7 +15,7 @@ Deakin University, Australia
 ## Dependencies
 - [ViZDoom](https://github.com/mwydmuch/ViZDoom)
 - [PyTorch](http://pytorch.org)
-- Opencv
+- Opencva
 
 ## Usage
 
@@ -63,15 +63,15 @@ To test the trained model, use `--load saved/model_best` in the above commands.
 ```
 
 ## Cite as
->Nguyen T.Tin, Kim Yong Guk, 2021. Using Stacked Attention and Auto-Encoder for Task-Oriented Language Grounding. arXiv preprint arXiv:1706.07230. ([PDF](None))
+>Nguyen T.Tin, Che Peng Lim, Kim Yong Guk, 2022. Using Stacked Attention and Auto-Encoder for Task-Oriented Language Grounding. arXiv preprint arXiv:1706.07230. ([PDF](None))
 
 ### Bibtex:
 ```
-@article{chaplot2017gated,
+@article{zzzzzzzzzzzzzz,
   title={Using Stacked Attention and Auto-Encoder for Task-Oriented Language Grounding},
-  author={Nguyen T.Tin, Kim Yong Guk},
+  author={Nguyen T.Tin, Che Peng Lim, Kim Yong Guk},
   journal={arXiv preprint arXiv:1706.07230},
-  year={2021}
+  year={2022}
 }
 ```
 
