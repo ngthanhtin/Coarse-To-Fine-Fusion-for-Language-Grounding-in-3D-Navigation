@@ -41,7 +41,7 @@ python a3c_main.py --num-processes 4 --evaluate 0 --difficulty easy
 
 For training a Stacked Attention and Auto-Encoder A3C-LSTM with  agent with 4 threads:
 ```
-python a3c_main.py --num-processes 4 --evaluate 0 --auto-encoder
+python a3c_main.py --num-processes 4 --evaluate 0  --difficulty easy --auto-encoder
 ```
 
 The code will save the best model at `./saved/`.
