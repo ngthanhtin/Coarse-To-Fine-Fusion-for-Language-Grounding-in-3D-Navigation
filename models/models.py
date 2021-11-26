@@ -64,6 +64,8 @@ class A3C_LSTM_GA(torch.nn.Module):
             self.v_att = ConvolvedAttention(5, 8*17, 512, 64)
             self.conv_4 = nn.Conv2d(1, 64, kernel_size=3, stride=2)
             self.conv_5 = nn.Conv2d(64, 64, kernel_size=3, stride=2)
+        if args.attention == 'gated':
+            self.attn_linear = nn.Linear(512, 64)
 
         # Time embedding layer, helps in stabilizing value prediction
         self.time_emb_dim = 32
@@ -76,6 +78,8 @@ class A3C_LSTM_GA(torch.nn.Module):
             self.linear = nn.Linear(512, 256)
         if args.attention == 'convolve':
             self.linear = nn.Linear(960, 256)
+        if args.attention == 'gated':
+            self.linear = nn.Linear(64*8*17, 256)
 
         self.lstm = nn.LSTMCell(256, 256)
         self.critic_linear = nn.Linear(256 + self.time_emb_dim, 1)
@@ -129,6 +133,12 @@ class A3C_LSTM_GA(torch.nn.Module):
             att = self.conv_5(att)
             att = self.prelu(att)
             att = att.view(-1).unsqueeze(0)
+        if self.args.attention == "gated":
+            x_attention = F.sigmoid(self.attn_linear(s_emb))
+            x_attention = x_attention.unsqueeze(2).unsqueeze(3)
+            x_attention = x_attention.expand(1, 64, 8, 17)
+            x = x_emb*x_attention
+            att = x.view(x.size(0), -1)
             
         x = att
         
