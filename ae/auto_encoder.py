@@ -52,44 +52,11 @@ class Auto_Encoder_Model_PReLu(nn.Module):
         output = self.reconstruct_pass(output)
         return output
 
-class Auto_Encoder_Model_PReLu224(nn.Module):
-    def __init__(self):
-        super(Auto_Encoder_Model_PReLu224, self).__init__()
-        self.prelu = nn.PReLU() 
-        # Encoder
-        self.conv1 = nn.Conv2d(3, 128, kernel_size=8, stride=4)
-        self.conv2 = nn.Conv2d(128, 64, kernel_size=4, stride=2)
-        self.conv3 = nn.Conv2d(64, 64, kernel_size=4, stride=2) # 16*8*17
-
-        # Decoder
-        self.tran_conv1 = nn.ConvTranspose2d(64, 64, kernel_size=4, stride=2)
-        self.tran_conv2 = nn.ConvTranspose2d(64, 128, kernel_size=4, stride=2, output_padding=[1, 1])
-        self.tran_conv3 = nn.ConvTranspose2d(128, 3, kernel_size=8, stride=4)
-        
-
-    def forward_pass(self, x):
-        output = self.prelu(self.conv1(x))
-        output = self.prelu(self.conv2(output))
-        output = self.prelu(self.conv3(output))
-        return output
-
-    def reconstruct_pass(self, x):
-        output = self.prelu(self.tran_conv1(x))
-        output = self.prelu(self.tran_conv2(output))
-        output = self.prelu(self.tran_conv3(output))
-        return output
-
-    def forward(self, x):
-        output = self.forward_pass(x)
-        output = self.reconstruct_pass(output)
-        return output
-
 def train():
     #train AE
     device = 'cuda:0'
-    model = Auto_Encoder_Model_PReLu224().to(device)
-    # model = Spatial_Auto_Encoder_Model(device=device).to(device)
-    model.load_state_dict(torch.load('./ae/ae_full_prelu_224.pth'))
+    model = Auto_Encoder_Model_PReLu().to(device)
+    model.load_state_dict(torch.load('./ae/ae_full_prelu.pth'))
     ae_criterion = torch.nn.MSELoss().to(device)
     optim = torch.optim.Adamax(filter(lambda p: p.requires_grad, model.parameters()))
 
@@ -97,7 +64,7 @@ def train():
     # image = torch.from_numpy(image).float()/255.0 
     # ToTensor already divided the image by 255
     batch_size = 16
-    dataset = datasets.ImageFolder('/home/tinvn/TIN/NLP_RL_Code/data/data_ae/', transform=transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()]))
+    dataset = datasets.ImageFolder('../data/data_ae/', transform=transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()]))
     data_loader = torch.utils.data.DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
     #train
     epochs = 100
@@ -123,12 +90,12 @@ def train():
 
 def test():
     device = 'cuda:0'
-    model = Auto_Encoder_Model_PReLu224().to(device)
-    weight_path = './ae/ae_full_prelu_224.pth'
+    model = Auto_Encoder_Model_PReLu().to(device)
+    weight_path = './ae/ae_full_prelu.pth'
     print('load initial weights CDAE from: %s'%(weight_path))
     model.load_state_dict(torch.load(weight_path))
     model.eval()
-    folder = '/home/tinvn/TIN/NLP_RL_Code/data/data_ae/images/'
+    folder = '../data/data_ae/images/'
     files = os.listdir(folder)
     f = random.choice(files)
 
