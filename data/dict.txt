@@ -1,0 +1,1 @@
+{'Go': 0, 'to': 1, 'the': 2, 'short': 3, 'red': 4, 'object': 5, 'torch': 6, 'green': 7, 'tall': 8, 'smallest': 9, 'pillar': 10, 'blue': 11, 'yellow': 12, 'skullkey': 13, 'largest': 14, 'keycard': 15, 'armor': 16}
