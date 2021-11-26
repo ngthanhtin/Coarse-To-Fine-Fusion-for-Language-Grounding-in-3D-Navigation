@@ -5,7 +5,6 @@ import numpy as np
 import itertools
 import json,os 
 import torch.nn.functional as F
-from fc import FCNet
 
 def create_glove_embedding_init(idx2word, glove_file):
     word2emb = {}
@@ -198,34 +197,3 @@ class SentenceEmbedding(nn.Module):
         output, hidden = self.rnn(x, hidden)
         
         return output
-
-
-class SentenceSelfAttention(nn.Module):
-    def __init__(self, num_hid, dropout):
-        super(SentenceSelfAttention, self).__init__()
-        self.num_hid = num_hid
-        self.drop = nn.Dropout(dropout)
-        self.W1_self_att_q = FCNet(dims=[num_hid, num_hid], dropout=dropout,
-                                   act=None)
-        self.W2_self_att_q = FCNet(dims=[num_hid, 1], act=None)
-
-    def forward(self, ques_feat):
-        '''
-        ques_feat: [batch, 14, num_hid]
-        '''
-        batch_size = ques_feat.shape[0]
-        q_len = ques_feat.shape[1]
-
-        # (batch*14,num_hid)
-        ques_feat_reshape = ques_feat.contiguous().view(-1, self.num_hid)
-        # (batch, 14)
-        atten_1 = self.W1_self_att_q(ques_feat_reshape)
-        atten_1 = torch.tanh(atten_1)
-        atten = self.W2_self_att_q(atten_1).view(batch_size, q_len)
-        # (batch, 1, 14)
-        weight = F.softmax(atten.t(), dim=1).view(-1, 1, q_len)
-        ques_feat_self_att = torch.bmm(weight, ques_feat)
-        ques_feat_self_att = ques_feat_self_att.view(-1, self.num_hid)
-        # (batch, num_hid)
-        ques_feat_self_att = self.drop(ques_feat_self_att)
-        return ques_feat_self_att

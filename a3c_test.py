@@ -141,7 +141,7 @@ def test(rank, args, shared_model):
                         "Best Reward {}\n".format(best_reward)]))
                 if np.mean(rewards_list) >= best_reward and args.evaluate == 0:
                     torch.save(model.state_dict(),
-                               args.dump_location+"train_medium_ae_forier_d1")
+                               args.dump_location+"train_hard_ae")
 
                     best_reward = np.mean(rewards_list)
 

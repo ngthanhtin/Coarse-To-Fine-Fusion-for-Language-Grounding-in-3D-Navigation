@@ -47,13 +47,13 @@ parser.add_argument('--all-instr-file', type=str,
                     help="""All instructions file
                     (default: data/instructions_all.json)""")
 parser.add_argument('--train-instr-file', type=str,
-                    default="data/instructions_train.json",
+                    default="./data/instructions_train.json",
                     help="""Train instructions file
-                    (default: data/instructions_train.json)""")
+                    (default: ./data/instructions_train.json)""")
 parser.add_argument('--test-instr-file', type=str,
-                    default="data/instructions_test.json",
+                    default="./data/instructions_test.json",
                     help="""Test instructions file
-                    (default: data/instructions_test.json)""")
+                    (default: ./data/instructions_test.json)""")
 parser.add_argument('--object-size-file', type=str,
                     default="data/object_sizes.txt",
                     help='Object size file (default: data/object_sizes.txt)')
