@@ -5,9 +5,9 @@ import time
 import logging
 import cv2
 import env as grounding_env
-from new_models_2 import A3C_LSTM_GA
-from ae.auto_encoder import Auto_Encoder_Model_PReLu224, Auto_Encoder_Model_PReLu
-from constants import *
+from models import A3C_LSTM_GA
+from ae.auto_encoder import Auto_Encoder_Model_PReLu
+from utils.constants import *
 device='cpu'
 log_file = 'test_easy_ae_forier_d1.log'
 def test(rank, args, shared_model):
@@ -19,7 +19,7 @@ def test(rank, args, shared_model):
 
     ae_model = None
     if args.auto_encoder:
-        ae_model = Auto_Encoder_Model_PReLu224()
+        ae_model = Auto_Encoder_Model_PReLu()
 
     model = A3C_LSTM_GA(args, ae_model).to(device)
     if (args.load != "0"):

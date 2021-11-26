@@ -7,10 +7,10 @@ import torch
 import torch.multiprocessing as mp
 
 import env as grounding_env
-from new_models_2 import A3C_LSTM_GA
+from models import A3C_LSTM_GA
 from a3c_train import train
 from a3c_test import test
-from ae.auto_encoder import Auto_Encoder_Model_PReLu, Auto_Encoder_Model_PReLu224
+from ae.auto_encoder import Auto_Encoder_Model_PReLu
 
 torch.multiprocessing.set_start_method('spawn', force=True)
 
@@ -127,7 +127,7 @@ if __name__ == '__main__':
     
     ae_model = None
     if args.auto_encoder:
-        ae_model = Auto_Encoder_Model_PReLu224()
+        ae_model = Auto_Encoder_Model_PReLu()
         # pytorch_total_params = sum(p.numel() for p in ae_model.parameters())
         # print(pytorch_total_params)
         print('Loading initial weights CDAE from: %s'%(args.ae_model_path))

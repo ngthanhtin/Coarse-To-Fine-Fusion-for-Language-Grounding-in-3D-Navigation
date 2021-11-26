@@ -1,14 +1,14 @@
 import torch.optim as optim
 import env as grounding_env
 import torchvision
-from new_models_2 import *
+from models import *
 import math 
 import matplotlib.pyplot as plt
 import cv2
 import logging
-from ae.auto_encoder import Auto_Encoder_Model_PReLu224, Auto_Encoder_Model_PReLu
+from ae.auto_encoder import Auto_Encoder_Model_PReLu
 
-log_file = 'train_medium_ae_forier_d1.log'
+log_file = 'train_hard_ae.log'
 device = 'cpu'
 
 def ensure_shared_grads(model, shared_model):
@@ -28,7 +28,7 @@ def train(rank, args, shared_model):
 
     ae_model = None
     if args.auto_encoder:
-        ae_model = Auto_Encoder_Model_PReLu224()
+        ae_model = Auto_Encoder_Model_PReLu()
 
     model = A3C_LSTM_GA(args, ae_model).to(device)
     
