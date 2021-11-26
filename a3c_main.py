@@ -122,8 +122,8 @@ if __name__ == '__main__':
     env = grounding_env.GroundingEnv(args)
     args.vocab_size = len(env.word_to_idx)
     args.dictionary = env.word_to_idx
-    with open("dict.txt", "w") as f:
-            f.write("{}\n".format(args.dictionary))
+    # with open("dict.txt", "w") as f:
+    #         f.write("{}\n".format(args.dictionary))
     
     ae_model = None
     if args.auto_encoder:

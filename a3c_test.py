@@ -31,7 +31,7 @@ def test(rank, args, shared_model):
     model.eval()
 
     (image, depth, instruction), _, _ = env.reset()
-    print(instruction)
+    
     # depth =np.expand_dims(depth, axis=0)
     # image = np.concatenate((image, depth), axis=0)
 
@@ -151,7 +151,7 @@ def test(rank, args, shared_model):
             reward_sum = 0
             episode_length = 0
             (image, depth, instruction), _, _ = env.reset()
-            print(instruction)
+            
             # depth =np.expand_dims(depth, axis=0)
             # image = np.concatenate((image, depth), axis=0)
             # Print instruction while evaluating and visualizing

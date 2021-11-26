@@ -90,8 +90,7 @@ def train(rank, args, shared_model):
             instruction_idx = instruction_idx.to(device).float()
 
             if args.auto_encoder:
-                # if original_image.shape == (3, 168, 300):
-                if original_image.shape == (3, 224, 224):
+                if original_image.shape == (3, 168, 300):
                     original_image = np.moveaxis(original_image, 0, 2)
     
                 ae_input = original_image / 255.0
