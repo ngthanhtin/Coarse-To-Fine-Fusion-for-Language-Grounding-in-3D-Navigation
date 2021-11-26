@@ -110,12 +110,14 @@ class A3C_LSTM_GA(torch.nn.Module):
         else:
             x, input_inst, (tx, hx, cx) = inputs
             # Get the image representation
-            x = self.prelu(self.conv1(x))
-            # x = F.relu(self.conv1(x))
-            x =self.prelu(self.conv2(x))
-            # x = F.relu(self.conv2(x))
-            x_image_rep = self.prelu(self.conv3(x))
-            # x_image_rep = F.relu(self.conv3(x))
+            if self.args.attention == "gated":
+                x = F.relu(self.conv1(x))
+                x = F.relu(self.conv2(x))
+                x_image_rep = F.relu(self.conv3(x))    
+            else:
+                x = self.prelu(self.conv1(x))
+                x = self.prelu(self.conv2(x))
+                x_image_rep = self.prelu(self.conv3(x))
             x_emb = x_image_rep
 
         tx = tx.long()
