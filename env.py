@@ -9,7 +9,7 @@ import json
 
 from utils.doom import *
 from utils.points import *
-from constants import *
+from utils.constants import *
 
 import math 
 
