@@ -8,6 +8,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 from language_model.language_model import tfidf_loading, WordEmbedding, SentenceEmbedding
 from attention.san.attention import StackedAttention
+from attention.convolve_attention.attention import ConvolvedAttention
 import cv2
 
 def normalized_columns_initializer(weights, std=1.0):
@@ -45,6 +46,12 @@ class A3C_LSTM_GA(torch.nn.Module):
         if args.auto_encoder:
             self.ae_model = ae_model
             self.convert = nn.Linear(50400, 8704)
+        else:
+            # Image Processing
+            self.conv1 = nn.Conv2d(3, 128, kernel_size=8, stride=4) 
+            self.conv2 = nn.Conv2d(128, 64, kernel_size=4, stride=2)
+            self.conv3 = nn.Conv2d(64, 64, kernel_size=4, stride=2)
+
         #language model
         self.w_emb = WordEmbedding(args.vocab_size, 32, 0.0) # , op='c'
         # self.w_emb = tfidf_loading(self.w_emb, args.dictionary)
@@ -53,11 +60,10 @@ class A3C_LSTM_GA(torch.nn.Module):
         #attention
         if args.attention == 'san':
             self.v_att = StackedAttention(2, 64*8*17, 512 , 512, 2, 0.0) #dropout=0.5
-
-        # Image Processing
-        # self.conv1 = nn.Conv2d(3, 128, kernel_size=8, stride=4) 
-        # self.conv2 = nn.Conv2d(128, 64, kernel_size=4, stride=2)
-        # self.conv3 = nn.Conv2d(64, 64, kernel_size=4, stride=2)
+        if args.attention == 'convolve':
+            self.v_att = ConvolvedAttention(5, 8*17, 512, 64)
+            self.conv_4 = nn.Conv2d(1, 64, kernel_size=3, stride=1)
+            self.conv_5 = nn.Conv2d(64, 64, kernel_size=3, stride=1)
 
         # Time embedding layer, helps in stabilizing value prediction
         self.time_emb_dim = 32
@@ -93,8 +99,7 @@ class A3C_LSTM_GA(torch.nn.Module):
             ae_input, x, input_inst, (tx, hx, cx) = inputs
             encoder = self.ae_model.forward_pass(ae_input)
             decoder = self.ae_model.reconstruct_pass(encoder)
-            #get the auto encoder representation  
-            ae_v_emb = encoder.view(encoder.shape[0], -1) 
+            x_emb = decoder
         else:
             x, input_inst, (tx, hx, cx) = inputs
             # Get the image representation
@@ -104,35 +109,26 @@ class A3C_LSTM_GA(torch.nn.Module):
             # x = F.relu(self.conv2(x))
             x_image_rep = self.prelu(self.conv3(x))
             # x_image_rep = F.relu(self.conv3(x))
-            x_emb = x_image_rep.view(1, -1)
-            
+            x_emb = x_image_rep
+
         tx = tx.long()
-        
-        if self.args.auto_encoder:
-            x_emb = ae_v_emb
-            # x_emb = torch.cat((x_emb, ae_v_emb), 1)
+            
         w_emb = self.w_emb(input_inst.long())
-        # with open("word.txt", "a+") as f:
-        #     f.write("{}\n".format(input_inst.cpu().detach().clone().numpy()[0]))
-        # with open("w_emb.txt", "a+") as f:
-        #     f.write("{}\n".format(w_emb.cpu().detach().clone().numpy()[0]))
+        s_emb = self.s_emb(w_emb)
 
         if self.args.attention == "san":
-            s_emb = self.s_emb(w_emb)
-
-        # with open("s_w_emb.txt", "a+") as f:
-        #     f.write("{}\n".format(s_emb.cpu().detach().clone().numpy()[0]))  
-
-        # exit()
-        if self.args.attention == "san":
+            x_emb = x_emb.view(1, -1)
             att = self.v_att(x_emb, s_emb, v_mask=False)
-        
+        if self.args.attention == "convolve":
+            att = self.v_att(x_emb, s_emb)
+            att = self.conv_4(att)
+            att = self.conv_5(att)
+            print(att.shape)
+            exit()
+            
         x = att
         
-        # with open("abc.txt", "a+") as f:
-        #     f.write("{}\n".format(x.cpu().detach().clone().numpy()[0]))
         # A3C-LSTM
-        
         x = self.prelu(self.linear(x))
         # x = F.relu(self.linear(x))
         hx, cx = self.lstm(x, (hx, cx))
