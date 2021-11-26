@@ -131,18 +131,18 @@ def plot_graph(graph1, graph2, graph3, label1,label2, label3, level='easy', show
     weight_smooth = 0.99
     weights1 = smooth(weights1, weight_smooth)
     weights2 = smooth(weights2, weight_smooth)
-    if level == 'hard':
-        for i in range(len(weights3)):    
-            weights3[i] += np.random.uniform(-0.04, 0.03)
-        if shown_type == 'acc':
-            weights3_file_new = open("/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/san_hard/train_san_prelu_hard2.log", "r")
-        elif shown_type == 'reward':
-            weights3_file_new = open("/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/san_hard/train_san_prelu_hard2_reward.log", "r")
+    # if level == 'hard':
+    #     for i in range(len(weights3)):    
+    #         weights3[i] += np.random.uniform(-0.04, 0.03)
+    #     if shown_type == 'acc':
+    #         weights3_file_new = open("/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/san_hard/train_san_prelu_hard2.log", "r")
+    #     elif shown_type == 'reward':
+    #         weights3_file_new = open("/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/san_hard/train_san_prelu_hard2_reward.log", "r")
         # for i in range(len(weights3)):
         #     weights3_file_new.write("{}\n".format(weights3[i]))
-        lines = weights3_file_new.readlines()
-        for i, line in enumerate(lines):
-            weights3[i] = float(line)
+        # lines = weights3_file_new.readlines()
+        # for i, line in enumerate(lines):
+        #     weights3[i] = float(line)
     weights3 = smooth(weights3, weight_smooth)
 
     #create upper bound line and lower bound line
@@ -182,12 +182,12 @@ def plot_graph(graph1, graph2, graph3, label1,label2, label3, level='easy', show
         
         weights3 = weights3[:7000] # san only
         times3 = times3[:7000]
-    elif level == 'hard':
-        weights1 = weights1[:-800]
-        times1 = times1[:-800]
+    # elif level == 'hard':
+    #     weights1 = weights1[:-800]
+    #     times1 = times1[:-800]
         
-        weights2 = weights2[:10000] #based
-        times2 = times2[:10000]
+    #     weights2 = weights2[:10000] #based
+    #     times2 = times2[:10000]
 
     #plot the max dashed lines
     points1 = np.ones(int(max(times1)))
@@ -209,59 +209,59 @@ def plot_graph(graph1, graph2, graph3, label1,label2, label3, level='easy', show
     text_style = dict(horizontalalignment='right', verticalalignment='center',
                   fontsize=7, fontdict={'family': 'monospace'})
     
-    #plot smallest max accs and times and coordinates
-    if weights1_max < weights2_max and weights1_max < weights3_max:
-        plt.plot(weights1_max*points1, color = 'blue', linewidth = 1, linestyle='dashed')
-        plt.plot((times1[times1_max_index], times1[times1_max_index]), (0.15, weights1_max), color = 'blue', linestyle='dashed')
-        plt.text(0, weights1_max, repr(round(weights1_max, 3)), **text_style)
-        plt.text(times1[times1_max_index], weights1_max + 0.02, "(" + repr(round(weights1_max, 3)) + ", " + repr(int(times1[times1_max_index])) + ")", **text_style)
-        plt.text(times1[times1_max_index], weights1_max + 0.02, "(" + repr(round(weights1_max, 3)) + ", " + repr(int(times1[times1_max_index])) + ")", **text_style)
-        plt.text(times1[times1_max_index], weights1_max + 0.02, "(" + repr(round(weights1_max, 3)) + ", " + repr(int(times1[times1_max_index])) + ")", **text_style)
+    # #plot smallest max accs and times and coordinates
+    # if weights1_max < weights2_max and weights1_max < weights3_max:
+    #     plt.plot(weights1_max*points1, color = 'blue', linewidth = 1, linestyle='dashed')
+    #     plt.plot((times1[times1_max_index], times1[times1_max_index]), (0.15, weights1_max), color = 'blue', linestyle='dashed')
+    #     plt.text(0, weights1_max, repr(round(weights1_max, 3)), **text_style)
+    #     plt.text(times1[times1_max_index], weights1_max + 0.02, "(" + repr(round(weights1_max, 3)) + ", " + repr(int(times1[times1_max_index])) + ")", **text_style)
+    #     plt.text(times1[times1_max_index], weights1_max + 0.02, "(" + repr(round(weights1_max, 3)) + ", " + repr(int(times1[times1_max_index])) + ")", **text_style)
+    #     plt.text(times1[times1_max_index], weights1_max + 0.02, "(" + repr(round(weights1_max, 3)) + ", " + repr(int(times1[times1_max_index])) + ")", **text_style)
 
-    elif weights2_max < weights1_max and weights2_max < weights3_max:
-        #plot dash lines
-        plt.plot(weights2_max*points2, color = 'black', linewidth = 1, linestyle='dashed')
-        plt.plot((times2[times2_max_index], times2[times2_max_index]), (0.03, weights2_max), color = 'black', linestyle='dashed') #0.03 for down, 1 for up
+    # elif weights2_max < weights1_max and weights2_max < weights3_max:
+    #     #plot dash lines
+    #     plt.plot(weights2_max*points2, color = 'black', linewidth = 1, linestyle='dashed')
+    #     plt.plot((times2[times2_max_index], times2[times2_max_index]), (0.03, weights2_max), color = 'black', linestyle='dashed') #0.03 for down, 1 for up
 
-        if level == "easy":
-            index1 = 4450
-            index3 = 5700
+    #     if level == "easy":
+    #         index1 = 4450
+    #         index3 = 5700
 
-        if level == "medium":
-            index1 = 5080
-            index3 = 6500
+    #     if level == "medium":
+    #         index1 = 5080
+    #         index3 = 6500
 
-        plt.plot((times1[index1], times1[index1]), (0.03, weights1[index1]), color = 'black', linestyle='dashed') #0.03 for down, 1 for up
-        plt.plot((times3[index3], times3[index3]), (0.03, weights3[index3]), color = 'black', linestyle='dashed')#0.03 for down, 1 for up
-        # plot texts
-        if level == "easy":
-            x_text_coord = -5
-        if level == "medium":
-            x_text_coord = 0
-        plt.text(x_text_coord, weights2_max - 0.02, repr(round(weights2_max, 3)), **text_style)
-        plt.text(times2[times2_max_index] + 1.5, 0.01, repr(int(times2[times2_max_index])), **text_style) #0.01 for down, 1.02 for up
-        plt.text(times1[index1] + 1.5, 0.01, repr(int(times1[index1])), **text_style)
-        plt.text(times3[index3] + 1.5, 0.01, repr(int(times3[index3])), **text_style)
+    #     plt.plot((times1[index1], times1[index1]), (0.03, weights1[index1]), color = 'black', linestyle='dashed') #0.03 for down, 1 for up
+    #     plt.plot((times3[index3], times3[index3]), (0.03, weights3[index3]), color = 'black', linestyle='dashed')#0.03 for down, 1 for up
+    #     # plot texts
+    #     if level == "easy":
+    #         x_text_coord = -5
+    #     if level == "medium":
+    #         x_text_coord = 0
+    #     plt.text(x_text_coord, weights2_max - 0.02, repr(round(weights2_max, 3)), **text_style)
+    #     plt.text(times2[times2_max_index] + 1.5, 0.01, repr(int(times2[times2_max_index])), **text_style) #0.01 for down, 1.02 for up
+    #     plt.text(times1[index1] + 1.5, 0.01, repr(int(times1[index1])), **text_style)
+    #     plt.text(times3[index3] + 1.5, 0.01, repr(int(times3[index3])), **text_style)
 
-    elif weights3_max < weights2_max and weights3_max < weights1_max:
-        # plot dash lines
-        plt.plot(weights3_max*points3, color = 'black', linewidth = 1, linestyle='dashed')
-        plt.plot((times3[times3_max_index], times3[times3_max_index]), (0.03, weights3_max), color = 'black', linestyle='dashed')
+    # elif weights3_max < weights2_max and weights3_max < weights1_max:
+    #     # plot dash lines
+    #     plt.plot(weights3_max*points3, color = 'black', linewidth = 1, linestyle='dashed')
+    #     plt.plot((times3[times3_max_index], times3[times3_max_index]), (0.03, weights3_max), color = 'black', linestyle='dashed')
 
-        if level == "hard":
-            index1 = 7400
-            index2 = 9800
+    #     if level == "hard":
+    #         index1 = 7400
+    #         index2 = 9800
 
-        plt.plot((times1[index1], times1[index1]), (0.03, weights1[index1]), color = 'black', linestyle='dashed')
-        plt.plot((times2[index2], times2[index2]), (0.03, weights2[index2]), color = 'black', linestyle='dashed')
+    #     plt.plot((times1[index1], times1[index1]), (0.03, weights1[index1]), color = 'black', linestyle='dashed')
+    #     plt.plot((times2[index2], times2[index2]), (0.03, weights2[index2]), color = 'black', linestyle='dashed')
 
-        # plot texts
-        if level == "hard":
-            x_text_coord = 0
-        plt.text(x_text_coord, weights3_max, repr(round(weights3_max, 3)), **text_style)
-        plt.text(times3[times3_max_index] + 1.5, 0.01, repr(int(times3[times3_max_index])), **text_style)
-        plt.text(times1[index1] + 1.5, 0.01, repr(int(times1[index1])), **text_style)
-        plt.text(times2[index2] + 1.5, 0.01, repr(int(times2[index2])), **text_style)
+    #     # plot texts
+    #     if level == "hard":
+    #         x_text_coord = 0
+    #     plt.text(x_text_coord, weights3_max, repr(round(weights3_max, 3)), **text_style)
+    #     plt.text(times3[times3_max_index] + 1.5, 0.01, repr(int(times3[times3_max_index])), **text_style)
+    #     plt.text(times1[index1] + 1.5, 0.01, repr(int(times1[index1])), **text_style)
+    #     plt.text(times2[index2] + 1.5, 0.01, repr(int(times2[index2])), **text_style)
     
 
     #plot acc lines
@@ -529,29 +529,30 @@ if __name__ == "__main__":
         graph1 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/easy/train9_ae_prelu.log", defaut_gap=55/3600)# ae + san
         graph2 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/easy/based_easy/train_based_easy.log") # base
         graph3 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/easy/train_san_prelu_easy.log", defaut_gap=55/3600) # san
-        graph4 = read_file(text_file="./saved/fourier_models/single_goal/easy/train_easy_forier_d1.log")
-        graph5 = read_file(text_file="./saved/fourier_models/single_goal/easy/train_easy_ae_forier_d1.log")
+        # graph4 = read_file(text_file="./saved/fourier_models/single_goal/easy/train_easy_forier_d1.log")
+        # graph5 = read_file(text_file="./saved/fourier_models/single_goal/easy/train_easy_ae_forier_d1.log")
         # plot
         if args.plot1:
             plot_graph(graph1, graph2, graph3, label1='SAN + AE easy', label2="Gated-attention easy", label3='SAN easy', level='easy', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['SAN + AE easy', 'GA easy', "SAN easy", "FGA easy", 'FGA + AE easy'], level='easy', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['SAN + AE easy', 'GA easy', "SAN easy", "DA easy", 'CA easy'], level='easy', shown_type=args.type)
             # plot_graph_2(graphs=[graph4, graph5], labels=["FAN easy", 'FAN + AE easy'], level='easy', shown_type=args.type)
     elif args.difficulty == 'medium':
         # medium
         graph1 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/medium/ae_san_medium/train_medium_ae_prelu.log", defaut_gap=70/3600)
         graph2 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/medium/based_medium/train8_medium.log")
         graph3 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/medium/san_medium/train_san_prelu_medium.log")
-        graph4 = read_file(text_file="./saved/fourier_models/single_goal/medium/train_medium_forier_d1.log")
-        graph5 = read_file(text_file="./saved/fourier_models/single_goal/medium/train_medium_ae_forier_d1.log")
+        # graph4 = read_file(text_file="./saved/fourier_models/single_goal/medium/train_medium_forier_d1.log")
+        # graph5 = read_file(text_file="./saved/fourier_models/single_goal/medium/train_medium_ae_forier_d1.log")
         # plot
         if args.plot1:
             plot_graph(graph1, graph2, graph3, label1='SAN + AE medium', label2="Gated-attention medium", label3='SAN medium', level='medium', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['SAN + AE medium', 'GA medium', "SAN medium", 'FGA medium', 'FGA + AE medium'], level='medium', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['SAN + AE medium', 'GA medium', "SAN medium", 'CA medium', 'DA medium'], level='medium', shown_type=args.type)
     elif args.difficulty == 'hard':
         # hard
-        graph1 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/ae_san_hard/train_hard_ae_prelu.log", defaut_gap=68/3600)#ae + san
+        # graph1 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/ae_san_hard/train_hard_ae_prelu.log", defaut_gap=68/3600)#ae + san
+        graph1 = read_file(text_file='train_hard_ae.log')
         graph2 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/based_hard/train_based_hard.log", defaut_gap=62/3600) # train_hard base
         graph3 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/san_hard/train_san_prelu_hard.log", defaut_gap=64/3600)#, defaut_gap=60/3600)#
         # graph4 = read_file(text_file="./saved/fourier_models/single_goal/hard/train_hard_forier_d1.log")
@@ -560,7 +561,7 @@ if __name__ == "__main__":
         if args.plot1:
             plot_graph(graph1, graph2, graph3, label1='SAN + AE hard', label2="Gated-attention hard", label3='SAN hard', level='hard', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['SAN + AE hard', 'GA hard', "SAN hard", 'FGA hard', 'FGA + AE hard'], level='hard', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['SAN + AE hard', 'GA hard', "SAN hard", 'CA hard', 'DA hard'], level='hard', shown_type=args.type)
 
     # print("Based easy (MT): ", calculate_mean_reward_and_acc('./saved/based_easy/test_MT_based_easy.log'))
     # print("Based easy (ZSL): ", calculate_mean_reward_and_acc('./saved/based_easy/test_ZSL_based_easy.log'))
