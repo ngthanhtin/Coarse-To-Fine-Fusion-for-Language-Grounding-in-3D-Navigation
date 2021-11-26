@@ -1,3 +1,6 @@
+"""
+Policy Learning models using Hadardmard Attention or Stacked Attention
+"""
 import numpy as np
 import torch
 import torch.nn as nn

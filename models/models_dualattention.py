@@ -1,5 +1,5 @@
 """
-Define policy learning with Convolution Attention in paper: https://arxiv.org/abs/1804.08454
+Define policy learning with Dual Attention in paper: https://arxiv.org/abs/1902.01385
 """
 import numpy as np
 import torch
