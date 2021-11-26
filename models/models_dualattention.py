@@ -1,3 +1,6 @@
+"""
+Define policy learning with Convolution Attention in paper: https://arxiv.org/abs/1804.08454
+"""
 import numpy as np
 import torch
 import torch.nn as nn
