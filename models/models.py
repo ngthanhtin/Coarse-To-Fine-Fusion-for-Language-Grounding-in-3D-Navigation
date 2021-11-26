@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-from language_model import tfidf_loading, WordEmbedding, SentenceEmbedding
+from language_model.language_model import tfidf_loading, WordEmbedding, SentenceEmbedding
 from attention.san.attention import StackedAttention
 from attention.san.bc import BCNet
 from attention.san.fc import FCNet

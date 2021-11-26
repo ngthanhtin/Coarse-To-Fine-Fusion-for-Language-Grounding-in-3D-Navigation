@@ -1,11 +1,10 @@
 import torch.optim as optim
-import env as grounding_env
+import env.env as grounding_env
 import torchvision
-from models import *
+from models.models import *
 import math 
 import matplotlib.pyplot as plt
 import cv2
-import logging
 from ae.auto_encoder import Auto_Encoder_Model_PReLu
 
 log_file = 'train_hard_ae.log'

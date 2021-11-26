@@ -6,8 +6,8 @@ import numpy as np
 import torch
 import torch.multiprocessing as mp
 
-import env as grounding_env
-from models import A3C_LSTM_GA
+import env.env as grounding_env
+from models.models import A3C_LSTM_GA
 from a3c_train import train
 from a3c_test import test
 from ae.auto_encoder import Auto_Encoder_Model_PReLu

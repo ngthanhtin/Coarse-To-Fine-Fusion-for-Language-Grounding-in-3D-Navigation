@@ -2,14 +2,15 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import time
-import logging
 import cv2
-import env as grounding_env
-from models import A3C_LSTM_GA
+import env.env as grounding_env
+from models.models import A3C_LSTM_GA
 from ae.auto_encoder import Auto_Encoder_Model_PReLu
 from utils.constants import *
+
 device='cpu'
-log_file = 'test_easy_ae_forier_d1.log'
+log_file = 'train_hard_ae.log'
+
 def test(rank, args, shared_model):
 
     torch.manual_seed(args.seed + rank)
