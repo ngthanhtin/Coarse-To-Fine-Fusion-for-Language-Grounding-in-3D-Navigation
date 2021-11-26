@@ -554,8 +554,8 @@ if __name__ == "__main__":
         graph1 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/ae_san_hard/train_hard_ae_prelu.log", defaut_gap=68/3600)#ae + san
         graph2 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/based_hard/train_based_hard.log", defaut_gap=62/3600) # train_hard base
         graph3 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/san_hard/train_san_prelu_hard.log", defaut_gap=64/3600)#, defaut_gap=60/3600)#
-        graph4 = read_file(text_file="./saved/fourier_models/single_goal/hard/train_hard_forier_d1.log")
-        graph5 = read_file(text_file='./saved/fourier_models/single_goal/hard/train_hard_ae_forier_d1.log')
+        # graph4 = read_file(text_file="./saved/fourier_models/single_goal/hard/train_hard_forier_d1.log")
+        # graph5 = read_file(text_file='./saved/fourier_models/single_goal/hard/train_hard_ae_forier_d1.log')
         #plot
         if args.plot1:
             plot_graph(graph1, graph2, graph3, label1='SAN + AE hard', label2="Gated-attention hard", label3='SAN hard', level='hard', shown_type=args.type)
