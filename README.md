@@ -1,4 +1,5 @@
-# Using Stacked Attention and Auto-Encoder for Task-Oriented Language Grounding
+# Auto Encoder Vision Language Navigation in Vizdoom
+## Using Stacked Attention and Auto-Encoder for Task-Oriented Language Grounding
 
 [Using Stacked Attention and Auto-Encoder for Task-Oriented Language Grounding](None)<br />
 Nguyen T.Tin, Che Peng Lim, Kim Yong Guk<br />
