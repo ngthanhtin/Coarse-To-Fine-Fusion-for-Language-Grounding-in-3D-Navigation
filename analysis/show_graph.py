@@ -410,7 +410,7 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
 
     
     #labels
-    abandoned_graph = [0, 2, 4]
+    abandoned_graph = []
     lines = []
     
     for i in range(len(labels)):
@@ -529,13 +529,13 @@ if __name__ == "__main__":
         graph1 = read_file(text_file="./saved/easy/train9_ae_prelu.log", defaut_gap=55/3600)# ae + san
         graph2 = read_file(text_file="./saved/easy/based_easy/train_based_easy.log") # base
         graph3 = read_file(text_file="./saved/easy/train_san_prelu_easy.log", defaut_gap=55/3600) # san
-        # graph4 = read_file(text_file="./saved/fourier_models/single_goal/easy/train_easy_forier_d1.log")
+        graph4 = read_file(text_file="./train_hard_ae.log")
         # graph5 = read_file(text_file="./saved/fourier_models/single_goal/easy/train_easy_ae_forier_d1.log")
         # plot
         if args.plot1:
             plot_graph(graph1, graph2, graph3, label1='SAN + AE easy', label2="Gated-attention easy", label3='SAN easy', level='easy', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['SAN + AE easy', 'GA easy', "SAN easy", "DA easy", 'CA easy'], level='easy', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4], labels=['SAN + AE easy', 'GA easy', "SAN easy", "CA easy"], level='easy', shown_type=args.type)
             # plot_graph_2(graphs=[graph4, graph5], labels=["FAN easy", 'FAN + AE easy'], level='easy', shown_type=args.type)
     elif args.difficulty == 'medium':
         # medium
