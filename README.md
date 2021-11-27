@@ -34,15 +34,15 @@ python env_test.py -d easy
 ```
 
 ### Training
-For training a Stacked Attention A3C-LSTM agent with 4 threads:
+Example training a Stacked Attention A3C-LSTM agent with 4 threads:
 ```
-python a3c_main.py --num-processes 4 --evaluate 0 --difficulty easy
+python a3c_main.py --num-processes 4 --evaluate 0 (1) --difficulty easy (medium, hard) --attention san (dual, gated, convolve)
 ```
 
 
-For training a Stacked Attention and Auto-Encoder A3C-LSTM with  agent with 4 threads:
+Example training a Stacked Attention and Auto-Encoder A3C-LSTM with  agent with 4 threads:
 ```
-python a3c_main.py --num-processes 4 --evaluate 0  --difficulty easy --auto-encoder
+python a3c_main.py --num-processes 4 --evaluate 0 (1) --difficulty easy (medium, hard) --auto-encoder --attention san (dual, gated, convolve)
 ```
 
 The code will save the best model at `./saved/`.
