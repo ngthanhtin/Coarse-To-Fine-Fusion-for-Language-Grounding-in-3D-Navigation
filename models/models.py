@@ -81,6 +81,8 @@ class A3C_LSTM_GA(torch.nn.Module):
             self.linear = nn.Linear(512, 256)
         if args.attention == 'convolve':
             self.linear = nn.Linear(960, 256)
+        if args.attention == 'dual':
+            self.linear = nn.Linear(64*8*17, 256)
         if args.attention == 'gated':
             self.linear = nn.Linear(64*8*17, 256)
 
