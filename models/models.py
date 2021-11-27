@@ -123,6 +123,7 @@ class A3C_LSTM_GA(torch.nn.Module):
         tx = tx.long()
             
         w_emb = self.w_emb(input_inst.long())
+        w_emb = w_emb.expand(1, 64, 32)
         s_emb = self.s_emb(w_emb)
 
         if self.args.attention == "san":
