@@ -9,6 +9,7 @@ from torch.autograd import Variable
 from language_model.language_model import tfidf_loading, WordEmbedding, SentenceEmbedding
 from attention.san.attention import StackedAttention
 from attention.convolve_attention.attention import ConvolvedAttention
+from attention.dual_attention.attention import DualAttention
 import cv2
 
 def normalized_columns_initializer(weights, std=1.0):
@@ -64,6 +65,8 @@ class A3C_LSTM_GA(torch.nn.Module):
             self.v_att = ConvolvedAttention(5, 8*17, 512, 64)
             self.conv_4 = nn.Conv2d(1, 64, kernel_size=3, stride=2)
             self.conv_5 = nn.Conv2d(64, 64, kernel_size=3, stride=2)
+        if args.attention == 'dual':
+            self.v_att = DualAttention(args.vocab_size)
         if args.attention == 'gated':
             self.attn_linear = nn.Linear(512, 64)
 
@@ -121,9 +124,9 @@ class A3C_LSTM_GA(torch.nn.Module):
             x_emb = x_image_rep
 
         tx = tx.long()
-            
+        
+        
         w_emb = self.w_emb(input_inst.long())
-        w_emb = w_emb.expand(1, 64, 32)
         s_emb = self.s_emb(w_emb)
 
         if self.args.attention == "san":
@@ -136,13 +139,16 @@ class A3C_LSTM_GA(torch.nn.Module):
             att = self.conv_5(att)
             att = self.prelu(att)
             att = att.view(-1).unsqueeze(0)
+        if self.args.attention == "dual":
+            att = self.v_att(x_emb, s_emb, input_inst.long())
+            att = att.view(att.size(0), -1)
         if self.args.attention == "gated":
             x_attention = F.sigmoid(self.attn_linear(s_emb))
             x_attention = x_attention.unsqueeze(2).unsqueeze(3)
             x_attention = x_attention.expand(1, 64, 8, 17)
             x = x_emb*x_attention
             att = x.view(x.size(0), -1)
-            
+        
         x = att
         
         # A3C-LSTM
