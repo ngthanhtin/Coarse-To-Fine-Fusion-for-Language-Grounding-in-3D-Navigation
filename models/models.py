@@ -56,19 +56,19 @@ class A3C_LSTM_GA(torch.nn.Module):
         #language model
         self.w_emb = WordEmbedding(args.vocab_size, 32, 0.0) # , op='c'
         # self.w_emb = tfidf_loading(self.w_emb, args.dictionary)
-        self.s_emb = SentenceEmbedding(32, 512, 1, False, 0.0, 'GRU')
+        self.s_emb = SentenceEmbedding(32, 256, 1, False, 0.0, 'GRU')
         
         #attention
         if args.attention == 'san':
-            self.v_att = StackedAttention(2, 64*8*17, 512 , 512, 2, 0.0) #dropout=0.5
+            self.v_att = StackedAttention(2, 64*8*17, 256 , 256, 2, 0.0) #dropout=0.5
         if args.attention == 'convolve':
-            self.v_att = ConvolvedAttention(5, 8*17, 512, 64)
+            self.v_att = ConvolvedAttention(5, 8*17, 256, 64)
             self.conv_4 = nn.Conv2d(1, 64, kernel_size=3, stride=2)
             self.conv_5 = nn.Conv2d(64, 64, kernel_size=3, stride=2)
         if args.attention == 'dual':
-            self.v_att = DualAttention(args.vocab_size)
+            self.v_att = DualAttention(args.vocab_size, 256)
         if args.attention == 'gated':
-            self.attn_linear = nn.Linear(512, 64)
+            self.attn_linear = nn.Linear(256, 64)
 
         # Time embedding layer, helps in stabilizing value prediction
         self.time_emb_dim = 32
@@ -78,7 +78,7 @@ class A3C_LSTM_GA(torch.nn.Module):
 
         # A3C-LSTM layers
         if args.attention == 'san':
-            self.linear = nn.Linear(512, 256)
+            self.linear = nn.Linear(256, 256)
         if args.attention == 'convolve':
             self.linear = nn.Linear(960, 256)
         if args.attention == 'dual':
@@ -154,7 +154,10 @@ class A3C_LSTM_GA(torch.nn.Module):
         x = att
         
         # A3C-LSTM
-        x = self.prelu(self.linear(x))
+        if self.args.attention == "gated" or self.args.attention == "dual":
+            x = F.relu(self.linear(x))
+        else:
+            x = self.prelu(self.linear(x))
         # x = F.relu(self.linear(x))
         hx, cx = self.lstm(x, (hx, cx))
         time_emb = self.time_emb_layer(tx)

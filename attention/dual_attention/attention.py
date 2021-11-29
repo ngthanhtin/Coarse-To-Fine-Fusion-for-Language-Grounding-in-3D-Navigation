@@ -7,10 +7,11 @@ import torch.nn.functional as F
 
 # Dual Attention
 class DualAttention(nn.Module):
-    def __init__(self, vocab_size):
+    def __init__(self, vocab_size, text_feat_size):
         super(DualAttention, self).__init__()
 
         self.vocab_size = vocab_size
+        self.text_feat_size = text_feat_size
         
         self.attn_linear_1 = nn.Linear(self.vocab_size, 64) # 64 is the channel of visual features
         self.attn_linear_2 = nn.Linear(512, 64) # used for LSTM hidden features
