@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 from language_model.language_model import tfidf_loading, WordEmbedding, SentenceEmbedding
-from attention.san.attention import StackedAttention
+from attention.san.attention import StackedAttention, StackedAttention_2
 from attention.convolve_attention.attention import ConvolvedAttention
 from attention.dual_attention.attention import DualAttention
 import cv2
@@ -60,7 +60,8 @@ class A3C_LSTM_GA(torch.nn.Module):
         
         #attention
         if args.attention == 'san':
-            self.v_att = StackedAttention(2, 64*8*17, 256 , 256, 2, 0.0) #dropout=0.5
+            self.v_att = StackedAttention(2, 64*8*17, 256 , 256, 2, 0.0)
+            # self.v_att = StackedAttention_2(2, 64, 256, 256, 2, 0)
         if args.attention == 'convolve':
             self.v_att = ConvolvedAttention(5, 8*17, 256, 64)
             self.conv_4 = nn.Conv2d(1, 64, kernel_size=3, stride=2)

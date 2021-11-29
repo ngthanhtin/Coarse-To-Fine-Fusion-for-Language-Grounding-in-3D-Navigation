@@ -118,6 +118,39 @@ class StackedAttention_2(nn.Module):
             self.layers.append(nn.Conv2d(img_feat_size, att_size, kernel_size=1, padding=0))
             self.layers.append(nn.Conv2d(att_size, 1, kernel_size=1, padding=0))
 
+    def image_encoding_filter(self, text_features, img_features):
+        """
+        img_features: after convert num channels to self attention size
+        text_features: after convert num dims to self attention size
+        """
+        B, D, H, W = img_features.size(0), img_features.size(1), img_features.size(2), img_features.size(3)
+        self.R = nn.Parameter(torch.rand(self.batch_size, self.att_size, self.att_size))
+        #### text_features - (bs, D1)
+        #### img_features - (bs, channel, H, W)
+        img_features = img_features.view(img_features.size(0), img_features.size(1), -1)
+        img_features_tran = img_features.permute(0, 2, 1)
+        
+        affinity_matrix_int = torch.bmm(text_features, self.R)
+        affinity_matrix = torch.bmm(affinity_matrix_int, img_features_tran)
+        
+        affinity_matrix_sum = torch.sum(affinity_matrix, dim=1)
+        affinity_matrix_sum = torch.unsqueeze(affinity_matrix_sum, dim=1)
+        alpha_h = affinity_matrix/affinity_matrix_sum
+
+        alpha_h_tran = alpha_h.permute(0,2,1)
+        a_h = torch.bmm(alpha_h_tran, text_features)
+
+        cos = nn.CosineSimilarity(dim=2, eps=1e-6)
+        pdist = nn.PairwiseDistance(p=2)
+        epsilon = 0.3
+        # gates = (1 - cos(img_features.cpu(), a_h.cpu())).to(self.device)
+        gates = epsilon * pdist(img_features.cpu(), a_h.cpu()) +  (1 - epsilon) * cos(img_features.cpu(), a_h.cpu())
+        gates = gates.to(self.device)
+
+        gated_image_features = a_h * gates[:, :, None]     
+        
+        return gated_image_features.view(B, D, H, W)
+
     def forward(self, img_feat, ques_feat, v_mask=True):
         """
         Input: img_feat: NxDxHxW
@@ -129,6 +162,9 @@ class StackedAttention_2(nn.Module):
         D, H, W = img_feat.size(1), img_feat.size(2), img_feat.size(3)
         ques_emb_1 = self.Wu(ques_feat) # Nx(att_size)
         img_emb_1 = self.Wv(img_feat) # Nx (att_size) x HxW
+
+        ### img_emb_1 = self.image_encoding_filter(ques_emb_1, img_emb_1)
+
         # Compute attention distribution 
         h1 = self.tanh(ques_emb_1.view(N, self.att_size, 1, 1).expand(N, K, H, W) + img_emb_1)
         h1_emb = self.Wp(self.dropout(h1))
@@ -161,6 +197,8 @@ class StackedAttention_2(nn.Module):
             ques_embs.append(self.layers[3 * stack + 0](us[-1]))
             img_embs.append(self.layers[3 * stack + 1](img_feat))
 
+            ### ques_embs[-1] = self.image_encoding_filter(ques_embs[-1], img_embs[-1])
+            
             # Compute attention distribution
             hs.append(self.tanh(ques_embs[-1].view(N, self.att_size, 1, 1).expand(N, K, H, W) + img_embs[-1]))
             h_embs.append(self.layers[3*stack + 2](self.dropout(hs[-1])))
