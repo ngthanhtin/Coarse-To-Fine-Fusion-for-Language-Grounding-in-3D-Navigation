@@ -111,7 +111,7 @@ class StackedAttention_2(nn.Module):
         self.Wv = nn.Conv2d(img_feat_size, att_size, kernel_size=1, padding=0)
         self.Wp = nn.Conv2d(att_size, 1, kernel_size=1, padding=0)
 
-        self.attention_maps = []
+        self.attention_maps = [i for i in range(self.num_stacks)]
 
         for stack in range(num_stacks - 1):
             self.layers.append(nn.Linear(att_size, att_size, bias=True))
@@ -175,13 +175,13 @@ class StackedAttention_2(nn.Module):
             h1_emb.data.masked_fill_(mask.data, -float('inf'))
 
         p1 = self.softmax(h1_emb.view(N, H*W)).view(N, 1, H, W)
-        self.attention_maps.append(p1.data.clone())
+        self.attention_maps[0] = p1.data.clone()
 
         #  Compute weighted sum
         img_tilde = (p1.expand_as(img_emb_1)*img_emb_1).sum(3).sum(2).view(N, K)
 
         # Combine with question vector
-        u1 = img_tilde + ques_feat
+        u1 = img_tilde + ques_emb_1
 
         # Other stacks
         us = []
@@ -208,7 +208,7 @@ class StackedAttention_2(nn.Module):
                 h_embs[-1].data.masked_fill_(mask.data, -float('inf'))
         
             ps.append(self.softmax(h_embs[-1].view(N, H*W)).view(N, 1, H, W))
-            self.attention_maps.append(ps[-1].data.clone())
+            self.attention_maps[stack + 1] = ps[-1].data.clone()
             #  Compute weighted sum
             img_tildes.append((ps[-1].expand_as(img_embs[-1]) * img_embs[-1]).sum(3).sum(2).view(N, K))
             
