@@ -14,7 +14,7 @@ class DualAttention(nn.Module):
         self.text_feat_size = text_feat_size
         
         self.attn_linear_1 = nn.Linear(self.vocab_size, 64) # 64 is the channel of visual features
-        self.attn_linear_2 = nn.Linear(512, 64) # used for LSTM hidden features
+        self.attn_linear_2 = nn.Linear(256, 64) # used for LSTM hidden features
 
         self.softmax = nn.Softmax(dim = 1)
 
