@@ -1,10 +1,13 @@
+import sys
+sys.path.insert(0, './')
 import vizdoom
 import argparse
 import env as grounding_env
 import numpy as np
 import cv2
-from auto_encoder import Auto_Encoder_Model, Auto_Encoder_Model_Original
+from ae.auto_encoder import Auto_Encoder_Model_PReLu
 import torch
+
 parser = argparse.ArgumentParser(description='Grounding Environment Test')
 parser.add_argument('-l', '--max-episode-length', type=int, default=30,
                     help='maximum length of an episode (default: 30)')
@@ -59,8 +62,9 @@ if __name__ == '__main__':
     reward_sum = 0
     is_final = 1
 
-    save_path = '/home/tinvn/TIN/NLP_RL_Code/data/depth_medium/'
-    image_index = 0
+    save_path = '/home/tinvn/TIN/NLP_RL_Code/data/data_triplet/images/'
+    image_index = 67
+    prev_image = None
 
     device = 'cuda:0'
     # model = Auto_Encoder_Model_Original()#.to(device)
@@ -70,11 +74,12 @@ if __name__ == '__main__':
 
     while num_episodes < 400:
         if is_final:
-            (image, depth, instruction), _, _, _ = env.reset()
+            (image, depth, instruction), _, _ = env.reset()
             print("Instruction: {}".format(instruction))
 
+        prev_image = image
         # Take a random action
-        (image, depth, instruction), reward, is_final, _ = \
+        (image, depth, instruction), reward, is_final = \
             env.step(np.random.randint(3))
         
         # reconstruct image
@@ -91,16 +96,20 @@ if __name__ == '__main__':
         # cv2.waitKey(0)
         # save image
         # saved_image = np.moveaxis(depth, 0, -1) # for rgb image
-        saved_image = np.expand_dims(depth, axis=2)
         
-        # saved_image = cv2.cvtColor(saved_image, cv2.COLOR_BGR2RGB)
-        cv2.imwrite(save_path+'{}_depth_medium.png'.format(image_index), saved_image)
-        image_index += 1
-        if image_index == 5000:
+        if image_index == 99:
             break
         reward_sum += reward
 
         if is_final:
+            saved_image = np.moveaxis(prev_image, 0, -1)
+            saved_image = cv2.cvtColor(saved_image, cv2.COLOR_BGR2RGB)
+            flag = False
+            if reward_sum == 1.:
+                flag = True
+            cv2.imwrite(save_path+'{}_{}_{}.png'.format(image_index, instruction, flag), saved_image)
+            image_index+= 1
+
             print("Total Reward: {}".format(reward_sum))
             rewards_per_episode.append(reward_sum)
             num_episodes += 1
