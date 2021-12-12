@@ -112,7 +112,7 @@ class A3C_LSTM_GA(torch.nn.Module):
             ae_input, x, input_inst, (tx, hx, cx) = inputs
             encoder = self.ae_model.forward_pass(ae_input)
             decoder = self.ae_model.reconstruct_pass(encoder)
-            x_emb = decoder
+            x_emb = encoder
         else:
             x, input_inst, (tx, hx, cx) = inputs
             # Get the image representation
