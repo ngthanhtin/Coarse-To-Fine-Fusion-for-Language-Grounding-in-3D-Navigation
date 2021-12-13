@@ -11,7 +11,6 @@ from attention.san.attention import StackedAttention, StackedAttention_2
 from attention.convolve_attention.attention import ConvolvedAttention
 from attention.dual_attention.attention import DualAttention
 import cv2
-torch.manual_seed(1)
 
 def normalized_columns_initializer(weights, std=1.0):
     out = torch.randn(weights.size())
@@ -117,7 +116,7 @@ class A3C_LSTM_GA(torch.nn.Module):
         else:
             x, input_inst, (tx, hx, cx) = inputs
             # Get the image representation
-            if self.args.attention == "gated":
+            if self.args.attention == "gated" or self.args.attention == "dual":
                 x = F.relu(self.conv1(x))
                 x = F.relu(self.conv2(x))
                 x_image_rep = F.relu(self.conv3(x))    
