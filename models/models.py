@@ -11,6 +11,7 @@ from attention.san.attention import StackedAttention, StackedAttention_2
 from attention.convolve_attention.attention import ConvolvedAttention
 from attention.dual_attention.attention import DualAttention
 import cv2
+torch.manual_seed(1)
 
 def normalized_columns_initializer(weights, std=1.0):
     out = torch.randn(weights.size())
