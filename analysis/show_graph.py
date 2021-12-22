@@ -321,7 +321,7 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
     if len(graphs) != len(labels):
         print("Wrong!!!")
         return
-    colors = ['darkred', 'green', 'blue', 'red', "royalblue"]
+    colors = ['darkred', 'green', 'blue', 'red', "yellow", "purple"]
     
     times = []
     rewards = []
@@ -529,39 +529,42 @@ if __name__ == "__main__":
         graph1 = read_file(text_file="./saved/easy/train9_ae_prelu.log", defaut_gap=55/3600)# ae + san
         graph2 = read_file(text_file="./saved/easy/based_easy/train_based_easy.log") # base
         graph3 = read_file(text_file="./saved/easy/train_san_prelu_easy.log", defaut_gap=55/3600) # san
-        graph4 = read_file(text_file="./train_hard_ae.log")
-        # graph5 = read_file(text_file="./saved/fourier_models/single_goal/easy/train_easy_ae_forier_d1.log")
+        graph4 = read_file(text_file="./train_easy_convolve_ae.log")
+        # graph5 = read_file(text_file="./saved/convolve/train_easy_convolve.log")
+        graph5 = read_file(text_file="../FFT_VLN_Vizdoom/saved/fourier_models/single_goal/easy/train_easy_forier_d1.log")
         # plot
         if args.plot1:
             plot_graph(graph1, graph2, graph3, label1='SAN + AE easy', label2="Gated-attention easy", label3='SAN easy', level='easy', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4], labels=['SAN + AE easy', 'GA easy', "SAN easy", "CA easy"], level='easy', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['SAN + AE easy', 'GA easy', "SAN easy", "CA+AE easy", "CA easy"], level='easy', shown_type=args.type)
             # plot_graph_2(graphs=[graph4, graph5], labels=["FAN easy", 'FAN + AE easy'], level='easy', shown_type=args.type)
     elif args.difficulty == 'medium':
         # medium
         graph1 = read_file(text_file="./saved/medium/ae_san_medium/train_medium_ae_prelu.log", defaut_gap=70/3600)
         graph2 = read_file(text_file="./saved/medium/based_medium/train8_medium.log")
         graph3 = read_file(text_file="./saved/medium/san_medium/train_san_prelu_medium.log")
-        # graph4 = read_file(text_file="./saved/fourier_models/single_goal/medium/train_medium_forier_d1.log")
-        # graph5 = read_file(text_file="./saved/fourier_models/single_goal/medium/train_medium_ae_forier_d1.log")
+        graph4 = read_file(text_file="./saved/convolve/train_medium_convolve_ae.log") # forget to change name
+        graph5 = read_file(text_file="./saved/convolve/train_medium_convolve.log")
+        graph6 = read_file(text_file="../FFT_VLN_Vizdoom/saved/fourier_models/single_goal/medium/train_medium_forier_d1.log")
+
         # plot
         if args.plot1:
             plot_graph(graph1, graph2, graph3, label1='SAN + AE medium', label2="Gated-attention medium", label3='SAN medium', level='medium', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['SAN + AE medium', 'GA medium', "SAN medium", 'CA medium', 'DA medium'], level='medium', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5, graph6], labels=['SAN + AE medium', 'GA medium', "SAN medium", 'CA+AE medium','CA medium', 'FGA medium'], level='medium', shown_type=args.type)
     elif args.difficulty == 'hard':
         # hard
-        # graph1 = read_file(text_file="/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/ae_san_hard/train_hard_ae_prelu.log", defaut_gap=68/3600)#ae + san
-        graph1 = read_file(text_file='train_hard_ae.log')
+        graph1 = read_file(text_file="./saved/hard/ae_san_hard/train_hard_ae_prelu.log", defaut_gap=68/3600)#ae + san
         graph2 = read_file(text_file="./saved/hard/based_hard/train_based_hard.log", defaut_gap=62/3600) # train_hard base
         graph3 = read_file(text_file="./saved/hard/san_hard/train_san_prelu_hard.log", defaut_gap=64/3600)#, defaut_gap=60/3600)#
-        # graph4 = read_file(text_file="./saved/fourier_models/single_goal/hard/train_hard_forier_d1.log")
-        # graph5 = read_file(text_file='./saved/fourier_models/single_goal/hard/train_hard_ae_forier_d1.log')
+        graph4 = read_file(text_file="./saved/convolve/train_hard_convolve.log")
+        graph6 = read_file(text_file="./train_hard_convolve_ae.log")
+        graph5 = read_file(text_file='../FFT_VLN_Vizdoom/saved/fourier_models/single_goal/hard/train_hard_forier_d1.log')
         #plot
         if args.plot1:
             plot_graph(graph1, graph2, graph3, label1='SAN + AE hard', label2="Gated-attention hard", label3='SAN hard', level='hard', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['SAN + AE hard', 'GA hard', "SAN hard", 'CA hard', 'DA hard'], level='hard', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5, graph6], labels=['SAN + AE hard', 'GA hard', "SAN hard", 'CA hard', 'DA hard', 'CA+AE hard'], level='hard', shown_type=args.type)
 
     # print("Based easy (MT): ", calculate_mean_reward_and_acc('./saved/based_easy/test_MT_based_easy.log'))
     # print("Based easy (ZSL): ", calculate_mean_reward_and_acc('./saved/based_easy/test_ZSL_based_easy.log'))
