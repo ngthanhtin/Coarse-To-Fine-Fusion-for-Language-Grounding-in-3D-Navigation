@@ -63,7 +63,7 @@ if __name__ == '__main__':
     is_final = 1
 
     save_path = '/home/tinvn/TIN/NLP_RL_Code/data/data_triplet/images/'
-    image_index = 67
+    image_index = 0
     prev_image = None
 
     device = 'cuda:0'
@@ -72,7 +72,8 @@ if __name__ == '__main__':
     # print('load initial weights CDAE from: %s'%(weight_path))
     # model.load_state_dict(torch.load(weight_path))
 
-    while num_episodes < 400:
+    # while num_episodes < 400:
+    while True:
         if is_final:
             (image, depth, instruction), _, _ = env.reset()
             print("Instruction: {}".format(instruction))
@@ -97,7 +98,7 @@ if __name__ == '__main__':
         # save image
         # saved_image = np.moveaxis(depth, 0, -1) # for rgb image
         
-        if image_index == 99:
+        if image_index == 10000:
             break
         reward_sum += reward
 
@@ -107,8 +108,8 @@ if __name__ == '__main__':
             flag = False
             if reward_sum == 1.:
                 flag = True
-            cv2.imwrite(save_path+'{}_{}_{}.png'.format(image_index, instruction, flag), saved_image)
-            image_index+= 1
+                cv2.imwrite(save_path+'{}_{}_{}.png'.format(image_index, instruction, flag), saved_image)
+                image_index+= 1
 
             print("Total Reward: {}".format(reward_sum))
             rewards_per_episode.append(reward_sum)
