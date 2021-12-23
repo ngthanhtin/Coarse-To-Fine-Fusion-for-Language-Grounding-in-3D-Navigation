@@ -7,7 +7,8 @@ import numpy as np
 import cv2
 from ae.auto_encoder import Auto_Encoder_Model_PReLu
 import torch
-
+from cca import GCCA_loss
+ 
 parser = argparse.ArgumentParser(description='Grounding Environment Test')
 parser.add_argument('-l', '--max-episode-length', type=int, default=30,
                     help='maximum length of an episode (default: 30)')

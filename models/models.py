@@ -63,7 +63,7 @@ class A3C_LSTM_GA(torch.nn.Module):
             self.v_att = StackedAttention(2, 64*8*17, 256 , 256, 2, 0.0)
             # self.v_att = StackedAttention_2(2, 64, 256, 256, 2, 0)
         if args.attention == 'convolve':
-            self.v_att = ConvolvedAttention(5, 8*17, 256, 64)
+            self.v_att = ConvolvedAttention(5, 8*17, 256, 64) # 5 ,1,8,17
             self.conv_4 = nn.Conv2d(1, 64, kernel_size=3, stride=2)
             self.conv_5 = nn.Conv2d(64, 64, kernel_size=3, stride=2)
         if args.attention == 'dual':
@@ -131,7 +131,7 @@ class A3C_LSTM_GA(torch.nn.Module):
         
         w_emb = self.w_emb(input_inst.long())
         s_emb = self.s_emb(w_emb)
-
+        
         if self.args.attention == "san":
             x_emb = x_emb.view(1, -1)
             att = self.v_att(x_emb, s_emb, v_mask=False)
