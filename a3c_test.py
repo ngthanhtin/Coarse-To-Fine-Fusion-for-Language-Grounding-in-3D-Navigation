@@ -9,7 +9,7 @@ from ae.auto_encoder import Auto_Encoder_Model_PReLu
 from utils.constants import *
 
 device='cpu'
-log_file = 'train_hard_ae.log'
+log_file = 'train_easy_convolve_cf.log'
 
 def test(rank, args, shared_model):
 
@@ -141,7 +141,7 @@ def test(rank, args, shared_model):
                         "Best Reward {}\n".format(best_reward)]))
                 if np.mean(rewards_list) >= best_reward and args.evaluate == 0:
                     torch.save(model.state_dict(),
-                               args.dump_location+"train_hard_ae")
+                               args.dump_location+"train_easy_convolve_cf")
 
                     best_reward = np.mean(rewards_list)
 

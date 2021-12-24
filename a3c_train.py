@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import cv2
 from ae.auto_encoder import Auto_Encoder_Model_PReLu
 
-log_file = 'train_hard_ae.log'
+log_file = 'train_easy_convolve_cf.log'
 device = 'cpu'
 
 def ensure_shared_grads(model, shared_model):

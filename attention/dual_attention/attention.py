@@ -7,6 +7,9 @@ import torch.nn.functional as F
 
 # Dual Attention
 class DualAttention(nn.Module):
+    """
+    Note that, only the first gated attention is used for Instruction Following, the second one is used for Question Answering
+    """
     def __init__(self, vocab_size, text_feat_size):
         super(DualAttention, self).__init__()
 

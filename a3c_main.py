@@ -82,7 +82,7 @@ parser.add_argument('--dump-location', type=str, default="./saved/",
 # Attention arguments
 parser.add_argument('-att', '--attention', type=str, default="san",
                     help="""Type of attention,
-                    "san" or "convolve" or "dual" (default: san)""")
+                    "san" or "convolve" or "gated" (default: san)""")
 
 parser.add_argument('--glimpse', type=int, default=2,
                     help='glimpse in Bilinear Attention Networks')

@@ -66,8 +66,6 @@ class A3C_LSTM_GA(torch.nn.Module):
             self.v_att = ConvolvedAttention(5, 8*17, 256, 64) # 5 ,1,8,17
             self.conv_4 = nn.Conv2d(1, 64, kernel_size=3, stride=2)
             self.conv_5 = nn.Conv2d(64, 64, kernel_size=3, stride=2)
-        if args.attention == 'dual':
-            self.v_att = DualAttention(args.vocab_size, 256)
         if args.attention == 'gated':
             self.attn_linear = nn.Linear(256, 64)
 
@@ -81,9 +79,7 @@ class A3C_LSTM_GA(torch.nn.Module):
         if args.attention == 'san':
             self.linear = nn.Linear(256, 256)
         if args.attention == 'convolve':
-            self.linear = nn.Linear(960, 256)
-        if args.attention == 'dual':
-            self.linear = nn.Linear(64*8*17, 256)
+            self.linear = nn.Linear(2880, 256) # 960, 576
         if args.attention == 'gated':
             self.linear = nn.Linear(64*8*17, 256)
 
@@ -116,14 +112,17 @@ class A3C_LSTM_GA(torch.nn.Module):
         else:
             x, input_inst, (tx, hx, cx) = inputs
             # Get the image representation
-            if self.args.attention == "gated" or self.args.attention == "dual":
+            if self.args.attention == "gated":
                 x = F.relu(self.conv1(x))
                 x = F.relu(self.conv2(x))
                 x_image_rep = F.relu(self.conv3(x))    
             else:
-                x = self.prelu(self.conv1(x))
-                x = self.prelu(self.conv2(x))
-                x_image_rep = self.prelu(self.conv3(x))
+                # x = self.prelu(self.conv1(x))
+                # x = self.prelu(self.conv2(x))
+                # x_image_rep = self.prelu(self.conv3(x))
+                x1 = self.prelu(self.conv1(x))
+                x2 = self.prelu(self.conv2(x1))
+                x_image_rep = self.prelu(self.conv3(x2))
             x_emb = x_image_rep
 
         tx = tx.long()
@@ -136,15 +135,13 @@ class A3C_LSTM_GA(torch.nn.Module):
             x_emb = x_emb.view(1, -1)
             att = self.v_att(x_emb, s_emb, v_mask=False)
         if self.args.attention == "convolve":
-            att = self.v_att(x_emb, s_emb)
+            # att = self.v_att(x_emb, s_emb)
+            att = self.v_att([x1,x2,x_emb], s_emb)
             att = self.conv_4(att)
             att = self.prelu(att)
             att = self.conv_5(att)
             att = self.prelu(att)
             att = att.view(-1).unsqueeze(0)
-        if self.args.attention == "dual":
-            att = self.v_att(x_emb, s_emb, input_inst.long())
-            att = att.view(att.size(0), -1)
         if self.args.attention == "gated":
             x_attention = F.sigmoid(self.attn_linear(s_emb))
             x_attention = x_attention.unsqueeze(2).unsqueeze(3)
@@ -155,7 +152,7 @@ class A3C_LSTM_GA(torch.nn.Module):
         x = att
         
         # A3C-LSTM
-        if self.args.attention == "gated" or self.args.attention == "dual":
+        if self.args.attention == "gated":
             x = F.relu(self.linear(x))
         else:
             x = self.prelu(self.linear(x))
