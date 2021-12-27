@@ -9,6 +9,7 @@ from torch.autograd import Variable
 from language_model.language_model import tfidf_loading, WordEmbedding, SentenceEmbedding
 from attention.san.attention import StackedAttention, StackedAttention_2
 from attention.convolve_attention.attention import ConvolvedAttention
+from attention.convolve_attention.cf_attention import CF_ConvolvedAttention
 from attention.dual_attention.attention import DualAttention
 import cv2
 
@@ -66,6 +67,10 @@ class A3C_LSTM_GA(torch.nn.Module):
             self.v_att = ConvolvedAttention(5, 8*17, 256, 64) # 5 ,1,8,17
             self.conv_4 = nn.Conv2d(1, 64, kernel_size=3, stride=2)
             self.conv_5 = nn.Conv2d(64, 64, kernel_size=3, stride=2)
+        if args.attention == 'cf_convolve':
+            self.v_att = CF_ConvolvedAttention(5, 8*17, 256, 32, 64) # 5 ,1,8,17
+            self.conv_4 = nn.Conv2d(1, 64, kernel_size=3, stride=2)
+            self.conv_5 = nn.Conv2d(64, 64, kernel_size=3, stride=2)
         if args.attention == 'gated':
             self.attn_linear = nn.Linear(256, 64)
 
@@ -79,6 +84,8 @@ class A3C_LSTM_GA(torch.nn.Module):
         if args.attention == 'san':
             self.linear = nn.Linear(256, 256)
         if args.attention == 'convolve':
+            self.linear = nn.Linear(2880, 256) # 960, 576
+        if args.attention == 'cf_convolve':
             self.linear = nn.Linear(2880, 256) # 960, 576
         if args.attention == 'gated':
             self.linear = nn.Linear(64*8*17, 256)
@@ -137,6 +144,14 @@ class A3C_LSTM_GA(torch.nn.Module):
         if self.args.attention == "convolve":
             # att = self.v_att(x_emb, s_emb)
             att = self.v_att([x1,x2,x_emb], s_emb)
+            att = self.conv_4(att)
+            att = self.prelu(att)
+            att = self.conv_5(att)
+            att = self.prelu(att)
+            att = att.view(-1).unsqueeze(0)
+        if self.args.attention == "cf_convolve":
+            # att = self.v_att(x_emb, s_emb)
+            att = self.v_att([x1,x2,x_emb], s_emb, w_emb, input_inst)
             att = self.conv_4(att)
             att = self.prelu(att)
             att = self.conv_5(att)

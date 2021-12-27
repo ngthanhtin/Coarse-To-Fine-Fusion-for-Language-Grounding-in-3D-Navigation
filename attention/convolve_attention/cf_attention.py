@@ -13,15 +13,16 @@ def filter_predicate(input_sent):
     """
     dictionary = {'Go': 0, 'to': 1, 'the': 2, 'short': 3, 'red': 4, 'object': 5, 'torch': 6, 'green': 7, \
         'tall': 8, 'smallest': 9, 'pillar': 10, 'blue': 11, 'yellow': 12, 'skullkey': 13, 'largest': 14, 'keycard': 15, 'armor': 16}
-    colors = [4,7,11,12]
-    sizes = [3, 8]
-    objects = [5,6,10,13,15,16]
-    superelatives = [9,14]
+    # colors = [4,7,11,12]
+    # sizes = [3, 8]
+    # objects = [5,6,10,13,15,16]
+    # superelatives = [9,14]
 
     predicate_list = []
-    for c, i in enumerate(input_sent):
-        if c in colors or c in sizes or c in objects or c in superelatives:
-            predicate_list.append(i)
+    for c, i in enumerate(input_sent[0]):
+        # if c in colors or c in sizes or c in objects or c in superelatives:
+        if i > 2 and i < 17:
+            predicate_list.append(c)
     return predicate_list
 
 # Corse to Fine Convolved Attention
@@ -61,9 +62,9 @@ class CF_ConvolvedAttention(nn.Module):
         predicate_feat = self.linear_predicate(predicate_feat) #np, psi_dim
         # sentence_feat = self.linear_sentence(sentence_feat)#B, psi_dim 
 
-        psi = self.softmax(torch.mul(sentence_feat, predicate_feat.T))
+        psi = self.softmax(torch.matmul(sentence_feat, predicate_feat.T).sum(1))
         channel_scaled_vector = torch.ones(self.psi_dim, 1)
-        filter_sent_feat = torch.mul(psi, channel_scaled_vector.T) * sentence_feat + sentence_feat # B, psi_dim
+        filter_sent_feat = torch.matmul(psi, channel_scaled_vector.T) * sentence_feat + sentence_feat # B, psi_dim
 
         return filter_sent_feat
 
@@ -76,8 +77,10 @@ class CF_ConvolvedAttention(nn.Module):
         predicate_feat: (num of predicates, dim of each predicate)
         """
         predicate_list = filter_predicate(input_instr)
-        predicate_list_tensor = torch.Tensor(predicate_list)
-        predicate_feat = torch.index_select(word_embedding, 0, predicate_list_tensor)
+        predicate_list_tensor = torch.Tensor(predicate_list).int()
+        # channel_scaled_vector = torch.zeros(self.psi_dim, 1)
+        predicate_feat = torch.index_select(word_embedding, 1, predicate_list_tensor)
+        predicate_feat = predicate_feat[0]
         # filtering sentence_feat
         text_feat = self.sentence_filtering(predicate_feat, text_feat)
 
@@ -91,14 +94,15 @@ class CF_ConvolvedAttention(nn.Module):
             new_img_feats.append(new_img_feat)
 
         for k in range(self.num_sent_fc):
+            attention = torch.zeros(new_img_feats[0].size(0), 1, new_img_feats[0].size(2), new_img_feats[0].size(3))
             for i in range(len(self.channels)):
                 sent_fc = self.layers[i + k*len(self.channels)](text_feat)
                 sent_fc = sent_fc.unsqueeze(2).unsqueeze(2) # B, Dim, 1, 1
-                attention = F.conv2d(new_img_feats[i], sent_fc, stride=(1,1))
+                attention += F.conv2d(new_img_feats[i], sent_fc, stride=(1,1))
                 
-                if i + k*len(self.channels) == 0:
-                    self.attention_maps = attention
-                else:
-                    self.attention_maps = torch.cat([self.attention_maps, attention], 0)
+            if k == 0:
+                self.attention_maps = attention
+            else:
+                self.attention_maps = torch.cat([self.attention_maps, attention], 0)
         
         return self.attention_maps
