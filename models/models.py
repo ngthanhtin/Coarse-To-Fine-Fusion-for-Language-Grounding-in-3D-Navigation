@@ -84,9 +84,9 @@ class A3C_LSTM_GA(torch.nn.Module):
         if args.attention == 'san':
             self.linear = nn.Linear(256, 256)
         if args.attention == 'convolve':
-            self.linear = nn.Linear(2880, 256) # 960, 576
+            self.linear = nn.Linear(960, 256)
         if args.attention == 'cf_convolve':
-            self.linear = nn.Linear(2880, 256) # 960, 576
+            self.linear = nn.Linear(960, 256)
         if args.attention == 'gated':
             self.linear = nn.Linear(64*8*17, 256)
 
@@ -120,20 +120,16 @@ class A3C_LSTM_GA(torch.nn.Module):
             x, input_inst, (tx, hx, cx) = inputs
             # Get the image representation
             if self.args.attention == "gated":
-                x = F.relu(self.conv1(x))
-                x = F.relu(self.conv2(x))
-                x_image_rep = F.relu(self.conv3(x))    
+                x1 = F.relu(self.conv1(x))
+                x2 = F.relu(self.conv2(x1))
+                x_image_rep = F.relu(self.conv3(x2))    
             else:
-                # x = self.prelu(self.conv1(x))
-                # x = self.prelu(self.conv2(x))
-                # x_image_rep = self.prelu(self.conv3(x))
                 x1 = self.prelu(self.conv1(x))
                 x2 = self.prelu(self.conv2(x1))
                 x_image_rep = self.prelu(self.conv3(x2))
             x_emb = x_image_rep
 
         tx = tx.long()
-        
         
         w_emb = self.w_emb(input_inst.long())
         s_emb = self.s_emb(w_emb)
@@ -142,16 +138,14 @@ class A3C_LSTM_GA(torch.nn.Module):
             x_emb = x_emb.view(1, -1)
             att = self.v_att(x_emb, s_emb, v_mask=False)
         if self.args.attention == "convolve":
-            # att = self.v_att(x_emb, s_emb)
-            att = self.v_att([x1,x2,x_emb], s_emb)
+            att = self.v_att(x_emb, s_emb)
             att = self.conv_4(att)
             att = self.prelu(att)
             att = self.conv_5(att)
             att = self.prelu(att)
             att = att.view(-1).unsqueeze(0)
         if self.args.attention == "cf_convolve":
-            # att = self.v_att(x_emb, s_emb)
-            att = self.v_att([x1,x2,x_emb], s_emb, w_emb, input_inst)
+            att = self.v_att([x1,x2,x_emb], s_emb) # , w_emb, input_inst
             att = self.conv_4(att)
             att = self.prelu(att)
             att = self.conv_5(att)
@@ -171,7 +165,7 @@ class A3C_LSTM_GA(torch.nn.Module):
             x = F.relu(self.linear(x))
         else:
             x = self.prelu(self.linear(x))
-        # x = F.relu(self.linear(x))
+            
         hx, cx = self.lstm(x, (hx, cx))
         time_emb = self.time_emb_layer(tx)
         x = torch.cat((hx, time_emb.view(-1, self.time_emb_dim)), 1)
