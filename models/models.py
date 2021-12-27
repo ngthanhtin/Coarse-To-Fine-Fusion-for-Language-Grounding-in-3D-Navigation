@@ -114,7 +114,7 @@ class A3C_LSTM_GA(torch.nn.Module):
         if self.args.auto_encoder:
             ae_input, x, input_inst, (tx, hx, cx) = inputs
             if self.args.attention == "cf_convolve":
-                encoder, (x1,x2,x3) = self.ae_model.forward_pass(ae_input)
+                encoder, (x1,x2,x3) = self.ae_model.forward_pass(ae_input, return_conv=True)
             else:
                 encoder = self.ae_model.forward_pass(ae_input)
             decoder = self.ae_model.reconstruct_pass(encoder)
