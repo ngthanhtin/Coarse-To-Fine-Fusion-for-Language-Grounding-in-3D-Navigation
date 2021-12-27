@@ -47,29 +47,29 @@ class CF_ConvolvedAttention(nn.Module):
             for i in range(len(self.channels)):
                 self.layers.append(nn.Linear(ques_feat_size, self.channels[i], bias=True))
 
-        # use for filtering process
-        self.softmax = nn.Softmax(dim=-1)
-        self.psi_dim = self.ques_feat_size
-        # self.linear_sentence = nn.Linear(ques_feat_size, self.psi_dim)
-        self.linear_predicate = nn.Linear(predicate_size, self.psi_dim)
+    #     # use for filtering process
+    #     self.softmax = nn.Softmax(dim=-1)
+    #     self.psi_dim = self.ques_feat_size
+    #     # self.linear_sentence = nn.Linear(ques_feat_size, self.psi_dim)
+    #     self.linear_predicate = nn.Linear(predicate_size, self.psi_dim)
 
-    def sentence_filtering(self, predicate_feat, sentence_feat):
-        """
-        predicate feat: num predicate x dim of each predicate
-        sentence feat: B x dim of a sentence
-        return filtered sentence: B x dim psi
-        """
-        predicate_feat = self.linear_predicate(predicate_feat) #np, psi_dim
-        # sentence_feat = self.linear_sentence(sentence_feat)#B, psi_dim 
+    # def sentence_filtering(self, predicate_feat, sentence_feat):
+    #     """
+    #     predicate feat: num predicate x dim of each predicate
+    #     sentence feat: B x dim of a sentence
+    #     return filtered sentence: B x dim psi
+    #     """
+    #     predicate_feat = self.linear_predicate(predicate_feat) #np, psi_dim
+    #     # sentence_feat = self.linear_sentence(sentence_feat)#B, psi_dim 
 
-        psi = self.softmax(torch.matmul(sentence_feat, predicate_feat.T).sum(1))
-        channel_scaled_vector = torch.ones(self.psi_dim, 1)
-        filter_sent_feat = torch.matmul(psi, channel_scaled_vector.T) * sentence_feat + sentence_feat # B, psi_dim
+    #     psi = self.softmax(torch.matmul(sentence_feat, predicate_feat.T).sum(1))
+    #     channel_scaled_vector = torch.ones(self.psi_dim, 1)
+    #     filter_sent_feat = torch.matmul(psi, channel_scaled_vector.T) * sentence_feat + sentence_feat # B, psi_dim
 
-        return filter_sent_feat
+    #     return filter_sent_feat
 
-    def forward(self, img_feats, text_feat, word_embedding, input_instr):
-        #  
+    def forward(self, img_feats, text_feat):
+        #  , word_embedding, input_instr
         """
         img_feats: list of convolution layers [(B, C, W, H), ..]
         text_feat: (B, Dim) (last hidden layer of LSTM)
@@ -77,13 +77,13 @@ class CF_ConvolvedAttention(nn.Module):
         input_instr: input instruction as a vector
         predicate_feat: (num of predicates, dim of each predicate)
         """
-        predicate_list = filter_predicate(input_instr)
-        predicate_list_tensor = torch.Tensor(predicate_list).int()
-        # channel_scaled_vector = torch.zeros(self.psi_dim, 1)
-        predicate_feat = torch.index_select(word_embedding, 1, predicate_list_tensor)
-        predicate_feat = predicate_feat[0]
-        # filtering sentence_feat
-        text_feat = self.sentence_filtering(predicate_feat, text_feat)
+        # predicate_list = filter_predicate(input_instr)
+        # predicate_list_tensor = torch.Tensor(predicate_list).int()
+        # # channel_scaled_vector = torch.zeros(self.psi_dim, 1)
+        # predicate_feat = torch.index_select(word_embedding, 1, predicate_list_tensor)
+        # predicate_feat = predicate_feat[0]
+        # # filtering sentence_feat
+        # text_feat = self.sentence_filtering(predicate_feat, text_feat)
 
         # resize convolution layers
         new_img_feats = []
