@@ -35,11 +35,13 @@ class Auto_Encoder_Model_PReLu(nn.Module):
         self.tran_conv3 = nn.ConvTranspose2d(128, 3, kernel_size=8, stride=4)
         
 
-    def forward_pass(self, x):
-        output = self.prelu(self.conv1(x))
-        output = self.prelu(self.conv2(output))
-        output = self.prelu(self.conv3(output))
-        return output
+    def forward_pass(self, x, return_conv=False):
+        x1 = self.prelu(self.conv1(x))
+        x2 = self.prelu(self.conv2(x1))
+        x3 = self.prelu(self.conv3(x2))
+        if return_conv:
+            return x3, (x1,x2,x3)
+        return x3
 
     def reconstruct_pass(self, x):
         output = self.prelu(self.tran_conv1(x))
