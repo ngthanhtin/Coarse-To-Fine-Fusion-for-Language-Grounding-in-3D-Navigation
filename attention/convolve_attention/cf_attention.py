@@ -69,6 +69,7 @@ class CF_ConvolvedAttention(nn.Module):
         return filter_sent_feat
 
     def forward(self, img_feats, text_feat, word_embedding, input_instr):
+        #  
         """
         img_feats: list of convolution layers [(B, C, W, H), ..]
         text_feat: (B, Dim) (last hidden layer of LSTM)
