@@ -2,12 +2,11 @@ import sys
 sys.path.insert(0, './')
 import vizdoom
 import argparse
-import env as grounding_env
+import env2 as grounding_env
 import numpy as np
 import cv2
 from ae.auto_encoder import Auto_Encoder_Model_PReLu
 import torch
-from cca import GCCA_loss
  
 parser = argparse.ArgumentParser(description='Grounding Environment Test')
 parser.add_argument('-l', '--max-episode-length', type=int, default=30,
@@ -81,7 +80,7 @@ if __name__ == '__main__':
 
         prev_image = image
         # Take a random action
-        (image, depth, instruction), reward, is_final = \
+        (image, depth, instruction), (reward, augmented_instructions), is_final = \
             env.step(np.random.randint(3))
         
         # reconstruct image
@@ -104,12 +103,13 @@ if __name__ == '__main__':
         reward_sum += reward
 
         if is_final:
+            print(augmented_instructions)
             saved_image = np.moveaxis(prev_image, 0, -1)
             saved_image = cv2.cvtColor(saved_image, cv2.COLOR_BGR2RGB)
             flag = False
             if reward_sum == 1.:
                 flag = True
-                cv2.imwrite(save_path+'{}_{}_{}.png'.format(image_index, instruction, flag), saved_image)
+                # cv2.imwrite(save_path+'{}_{}_{}.png'.format(image_index, instruction, flag), saved_image)
                 image_index+= 1
 
             print("Total Reward: {}".format(reward_sum))

@@ -1,15 +1,15 @@
 import torch.optim as optim
-import env.env as grounding_env
+import env.env2 as grounding_env
 import torchvision
 from models.models import *
 import math 
 import matplotlib.pyplot as plt
 import cv2
 from ae.auto_encoder import Auto_Encoder_Model_PReLu
-from models.aug_trajectory_buffer import aug_buffer
-from utils.constants import WRONG_OBJECT_REWARD
+from utils.constants import WRONG_OBJECT_REWARD, CORRECT_OBJECT_REWARD
+import copy
 
-log_file = 'train_easy_convolve_cf_new.log'
+log_file = 'train_easy_convolve_cf_aug.log'
 device = 'cpu'
 
 def ensure_shared_grads(model, shared_model):
@@ -86,8 +86,8 @@ def train(rank, args, shared_model):
         log_probs = []
         rewards = []
         entropies = []
-        buffer = aug_buffer()
-        buffer_list = []
+        buffer_temp = []
+        buffer_main = []
 
         for step in range(args.num_steps):
             episode_length += 1
@@ -132,26 +132,39 @@ def train(rank, args, shared_model):
 
             action = action.numpy()[0, 0]
             
-            buffer_list.append([image, instruction_idx, (tx, hx, cx), action])
+            if args.auto_encoder:
+                buffer_temp.append([ae_input, image, instruction_idx, (tx, hx, cx), action])
+            else:
+                buffer_temp.append([image, instruction_idx, (tx, hx, cx), action])
 
-            (image, _, _), (reward, object_id), done = env.step(action)
+            (image, _, _), (reward, augmented_instructions), done = env.step(action)
             original_image =  image
 
             if done:
+                if reward == CORRECT_OBJECT_REWARD:
+                    # delete buffer_temp
+                    for obj in buffer_temp:
+                        del obj[:]
+                    del buffer_temp[:]
+
                 if reward == WRONG_OBJECT_REWARD:
-                    # sample proper instruction for this object
-                    proper_instructions = sample_proper_instruction(object_id)
+                    proper_instructions = augmented_instructions
                     for proper_instruction in proper_instructions:
                         proper_instruction_idx = []
                         for word in proper_instruction.split(" "):
                             proper_instruction_idx.append(env.word_to_idx[word])
                         proper_instruction_idx = np.array(proper_instruction_idx).astype(float)
                         proper_instruction_idx = torch.from_numpy(proper_instruction_idx).view(1, -1).float()
-                        for ob in buffer_list:
-                            ob[1] = proper_instruction_idx
-                            buffer.put(ob[0], ob[1], ob[2], ob[3])
-                # delete buffer_list
-                buffer_list.delete()
+                        for traj in buffer_temp:
+                            if args.auto_encoder:
+                                traj[2] = proper_instruction_idx
+                            else:
+                                traj[1] = proper_instruction_idx
+                        buffer_main.append(buffer_temp)
+                    # delete buffer_temp
+                    # for obj in buffer_temp:
+                    #     del obj[:]
+                    # del buffer_temp[:]
 
             done = done or episode_length >= args.max_episode_length
 
@@ -221,7 +234,17 @@ def train(rank, args, shared_model):
                 log_probs[i] * torch.Tensor(gae) - entropy_coef * entropies[i]
 
         # train for another goals
-        crossentropy_loss, accuracy = training_action_prediction(buffer, model)
+        crossentropy_loss, accuracy = training_action_prediction(buffer_main, model, use_ae=args.auto_encoder)
+        if accuracy != -1:
+            action_accuracy.append(accuracy)
+        # delete buffer_main, buffer temp
+        for obj in buffer_main:
+            del obj[:]
+        del buffer_main[:]
+        # delete buffer_temp
+        for obj in buffer_temp:
+            del obj[:]
+        del buffer_temp[:]
         #####
 
         optimizer.zero_grad()
@@ -237,6 +260,7 @@ def train(rank, args, shared_model):
                 print(" ".join([
                     "Training thread: {}".format(rank),
                     "Num iters: {}K".format(num_iters),
+                    "Action acc: {}".format(np.mean(action_accuracy)),
                     "Avg policy loss: {}".format(np.mean(p_losses)),
                     "Avg value loss: {}".format(np.mean(v_losses)),
                     "Avg AE loss: {}".format(np.mean(ae_losses))]))
@@ -245,6 +269,7 @@ def train(rank, args, shared_model):
                     f.write(" ".join([
                         "Training thread: {}".format(rank),
                         "Num iters: {}K".format(num_iters),
+                        "Action acc: {}".format(np.mean(action_accuracy)),
                         "Avg policy loss: {}".format(np.mean(p_losses)),
                         "Avg value loss: {}".format(np.mean(v_losses)),
                         "Avg AE loss: {}\n".format(np.mean(ae_losses))]))
@@ -252,6 +277,7 @@ def train(rank, args, shared_model):
                 print(" ".join([
                 "Training thread: {}".format(rank),
                 "Num iters: {}K".format(num_iters),
+                "Action acc: {}".format(np.mean(action_accuracy)),
                 "Avg policy loss: {}".format(np.mean(p_losses)),
                 "Avg value loss: {}".format(np.mean(v_losses))]))
             
@@ -259,12 +285,14 @@ def train(rank, args, shared_model):
                     f.write(" ".join([
                         "Training thread: {}".format(rank),
                         "Num iters: {}K".format(num_iters),
+                        "Action acc: {}".format(np.mean(action_accuracy)),
                         "Avg policy loss: {}".format(np.mean(p_losses)),
                         "Avg value loss: {}\n".format(np.mean(v_losses))]))
 
             p_losses = []
             v_losses = []
             ae_losses = []
+            action_accuracy = []
 
         if args.auto_encoder:
             if crossentropy_loss == -1 and accuracy == -1:
@@ -281,31 +309,33 @@ def train(rank, args, shared_model):
         ensure_shared_grads(model, shared_model)
         optimizer.step()
 
-def sample_proper_instruction(object_id):
-    return 'huhu'
-
-def training_action_prediction(buffer, model):
+def training_action_prediction(buffer, model, use_ae=False):
     if len(buffer) == 0:
         return -1, -1
-    batch_size = 4
-    batch = buffer.sample(batch_size)
-    batch_state, batch_instr, label = np.array(batch.obs), np.array(batch.instr), np.array(batch.action)
-    #
-    episode_length = 0
-    cx = torch.Tensor(torch.zeros(batch_size, 256)).to(device)
-    hx = torch.Tensor(torch.zeros(batch_size, 256)).to(device)
-    #
-    batch_state = torch.from_numpy(batch_state).float()
-    label = torch.tensor(label)
 
-    with torch.cuda.device('cuda:0'):
-        batch_state = Variable(torch.FloatTensor(batch_state)).cuda()
-        label = label.cuda()
+    crossentropy_loss = 0.
+    accuracy = 0.
+    
+    for i in range(len(buffer)): # each episode
+        for j in range(len(buffer[i])): # each step
+            if use_ae:
+                ae_input, image, instruction_idx, (tx, hx, cx), label = buffer[i][j]
+                value, logit, (hx, cx), decoder = model((ae_input, torch.Tensor(image.unsqueeze(0)),
+                                                    torch.Tensor(instruction_idx),
+                                                    (tx, hx, cx)))
+            else:
+                image, instruction_idx, (tx, hx, cx), label = buffer[i]
+                value, logit, (hx, cx) = model((torch.Tensor(image.unsqueeze(0)),
+                                                    torch.Tensor(instruction_idx),
+                                                    (tx, hx, cx)))
 
-    value, logit, (hx, cx) = model()
-    prob = F.softmax(logit,dim=-1)
-    values, indices = logit.max(1)
-    accuracy = torch.mean((indices.squeeze() == label).float())
-    crossentropy_loss = F.cross_entropy(logit, label.long())
+            prob = F.softmax(logit,dim=-1)
+            values, indices = logit.max(1)
+            label = torch.Tensor([label]).long()
+            accuracy += torch.mean((indices.squeeze() == label).float())
+            crossentropy_loss += F.cross_entropy(logit, label)
+
+    crossentropy_loss /= len(buffer)
+    accuracy /= len(buffer)
 
     return crossentropy_loss, accuracy

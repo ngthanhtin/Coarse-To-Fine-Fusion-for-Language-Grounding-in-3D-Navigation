@@ -3,13 +3,13 @@ import torch
 import torch.nn.functional as F
 import time
 import cv2
-import env.env as grounding_env
+import env.env2 as grounding_env
 from models.models import A3C_LSTM_GA
 from ae.auto_encoder import Auto_Encoder_Model_PReLu
 from utils.constants import *
 
 device='cpu'
-log_file = 'train_easy_convolve_cf_new.log'
+log_file = 'train_easy_convolve_cf_aug.log'
 
 def test(rank, args, shared_model):
 
@@ -101,7 +101,7 @@ def test(rank, args, shared_model):
         prob = F.softmax(logit, dim=-1)
         action = prob.max(1)[1].data.numpy()
 
-        (image, depth, _), reward, done = env.step(action[0])
+        (image, depth, _), (reward, augmented_instructions), done = env.step(action[0])
 
         # depth =np.expand_dims(depth, axis=0)
         # image = np.concatenate((image, depth), axis=0)
@@ -141,7 +141,7 @@ def test(rank, args, shared_model):
                         "Best Reward {}\n".format(best_reward)]))
                 if np.mean(rewards_list) >= best_reward and args.evaluate == 0:
                     torch.save(model.state_dict(),
-                               args.dump_location+"train_easy_convolve_cf_new")
+                               args.dump_location+"train_easy_convolve_cf_aug")
 
                     best_reward = np.mean(rewards_list)
 
@@ -167,5 +167,3 @@ def test(rank, args, shared_model):
 
         original_image = image
         image = torch.from_numpy(image).float()/255.0
-
-

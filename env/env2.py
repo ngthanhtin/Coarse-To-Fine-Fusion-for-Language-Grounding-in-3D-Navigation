@@ -51,6 +51,36 @@ class GroundingEnv:
         game.init()
         self.game = game
 
+    def sample_wrong_instruction(self, wrong_object_name):
+        augment_dict = {
+        'ShortBlueTorch': ['Go to the short torch', 'Go to the blue object', 'Go to the blue short object', 'Go to the short object',
+                        'Go to the short blue torch', 'Go to the blue short torch', 'Go to the torch'], 
+        'BlueTorch': ['Go to the blue object', 'Go to the torch'], 
+        'ShortRedTorch': ['Go to the red torch', 'Go to the red short object', 'Go to the short red object', 
+                            'Go to the torch', 'Go to the short object', 'Go to the short torch', 'Go to the red object'], 
+        'ShortRedColumn': ['Go to the short red pillar', 'Go to the red pillar', 'Go to the red object', 'Go to the pillar',
+                            'Go to the short red object', 'Go to the red short object', 'Go to the short object', 'Go to the short pillar'], 
+        'YellowCard': ['Go to the yellow object', 'Go to the yellow keycard', 'Go to the keycard'],
+        'YellowSkull': ['Go to the yellow object', 'Go to the yellow skullkey', 'Go to the skullkey'], 
+        'RedTorch': ['Go to the red torch', 'Go to the red object', 'Go to the torch'], 
+        'BlueCard': ['Go to the blue object', 'Go to the keycard'], 
+        'BlueSkull': ['Go to the blue object', 'Go to the blue skullkey', 'Go to the skullkey'], 
+        'ShortGreenTorch': ['Go to the green torch', 'Go to the short torch', 'Go to the green object', 'Go to the green short object',
+                        'Go to the short green object', 'Go to the green short torch', 'Go to the short object', 'Go to the torch'], 
+        'GreenTorch': ['Go to the green torch', 'Go to the green object', 'Go to the torch'], 
+        'GreenArmor': ['Go to the green object', 'Go to the armor'], 
+        'TallGreenColumn': ['Go to the tall object', 'Go to the green object', 'Go to the green tall object', 'Go to the tall green pillar',
+                        'Go to the green tall pillar', 'Go to the green pillar', 'Go to the pillar'], 
+        'ShortGreenColumn': ['Go to the green object', 'Go to the green pillar', 'Go to the green short object', 'Go to the short green object',
+                        'Go to the short pillar', 'Go to the short object', 'Go to the green short pillar', 'Go to the pillar'], 
+        'TallRedColumn': ['Go to the red tall object', 'Go to the tall red object', 'Go to the tall object', 'Go to the red object',
+                        'Go to the red pillar', 'Go to the red tall pillar', 'Go to the pillar'], 
+        'RedSkull': ['Go to the red skullkey', 'Go to the red object', 'Go to the skullkey'], 
+        'RedCard': ['Go to the red object', 'Go to the red keycard', 'Go to the keycard'], 
+        'BlueArmor': ['Go to the red object', 'Go to the red armor', 'Go to the armor']}
+        
+        return augment_dict[wrong_object_name]
+
     def reset(self):
         """Starts a new episode.
 
@@ -65,10 +95,10 @@ class GroundingEnv:
         self.time = 0
 
         self.instruction, instruction_id = self.get_random_instruction()
-
+        
         # Retrieve the possible correct objects for the instruction.
         correct_objects = self.get_target_objects(instruction_id)
-
+    
         # Since we fix the number of objects to 5.
         self.correct_location = np.random.randint(5)
 
@@ -77,6 +107,7 @@ class GroundingEnv:
         correct_object_id = np.random.choice(correct_objects)
         chosen_correct_object = [x for x in self.objects_info if
                                  x.name == self.objects[correct_object_id]][0]
+        
 
         # Special code to handle 'largest' and 'smallest' since we need to
         # compute sizes for those particular instructions.
@@ -182,7 +213,7 @@ class GroundingEnv:
 
         if dist <= REWARD_THRESHOLD_DISTANCE:
             reward = CORRECT_OBJECT_REWARD
-            return reward
+            return reward, ['success']
         else:
             for i, object_location in enumerate(self.object_coordinates):
                 if i == self.correct_location:
@@ -191,10 +222,16 @@ class GroundingEnv:
                                        object_location.x, object_location.y)
                 if dist <= REWARD_THRESHOLD_DISTANCE:
                     reward = WRONG_OBJECT_REWARD
-                    return reward, self.object_ids[i]
+                    wrong_object_id = self.object_ids[i]
+                    for key, value in self.object_dict.items():
+                        if wrong_object_id == value:
+                            wrong_object_id_name = key
+                            break
+                    return reward, self.sample_wrong_instruction(wrong_object_id_name)
+                    
             reward = self.params.living_reward
 
-        return reward, -1
+        return reward, ['alive'] 
 
     def get_agent_and_object_positions(self):
         """Get agent and object positions based on the difficulty
