@@ -7,7 +7,7 @@ from collections import namedtuple, deque
 Transition = namedtuple('Transition', ('obs', 'instr', 'action', 'reward'))
 
 
-class goal_storage(object):
+class aug_buffer(object):
     def __init__(self, capacity=100000):
         self.capacity = capacity
         self.memory = deque(maxlen=self.capacity)
@@ -26,3 +26,13 @@ class goal_storage(object):
 
     def len(self):
         return len(self.memory)
+    
+    def clear(self):
+        self.memory = deque(maxlen=self.capacity)
+        self.position = 0
+        # del self.memory[:]
+        # del actions[:]
+        # del self.states[:]
+        # del self.logprobs[:]
+        # del self.state_values[:]
+        # del self.rewards[:]
