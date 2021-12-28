@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import cv2
 from ae.auto_encoder import Auto_Encoder_Model_PReLu
 from utils.constants import WRONG_OBJECT_REWARD, CORRECT_OBJECT_REWARD
-import copy
+import random
 
 log_file = 'train_easy_convolve_cf_aug.log'
 device = 'cpu'
@@ -148,7 +148,8 @@ def train(rank, args, shared_model):
                     del buffer_temp[:]
 
                 if reward == WRONG_OBJECT_REWARD:
-                    proper_instructions = augmented_instructions
+                    augmented_instructions = random.shuffle(augmented_instructions)
+                    proper_instructions = augmented_instructions[:2]
                     for proper_instruction in proper_instructions:
                         proper_instruction_idx = []
                         for word in proper_instruction.split(" "):
