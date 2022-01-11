@@ -1,3 +1,4 @@
+from os import read
 from matplotlib import pyplot as plt
 import matplotlib
 import datetime
@@ -321,7 +322,7 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
     if len(graphs) != len(labels):
         print("Wrong!!!")
         return
-    colors = ['darkred', 'green', 'blue', 'red', "yellow", "purple"]
+    colors = ['darkred', 'green', 'blue', 'red', "darkorange", "purple"]
     
     times = []
     rewards = []
@@ -372,14 +373,14 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
         weights[1] = weights[1][:-200]
         times[1] = times[1][:-200]
     if level == 'medium':
-        weights[0] = weights[0][:-110] # san + ae
-        times[0] = times[0][:-110]
+        #weights[0] = weights[0][:-110] # san + ae
+        #times[0] = times[0][:-110]
 
         weights[1] = weights[1][:7170] # based
         times[1] = times[1][:7170]
         
-        weights[2] = weights[2][:6955] # san only
-        times[2] = times[2][:6955]
+        # weights[2] = weights[2][:6955] # san only
+        # times[2] = times[2][:6955]
     if level == 'hard':
         weights[0] = weights[0][:-800]
         times[0] = times[0][:-800]
@@ -481,7 +482,7 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
     plt.ylim(0, 1)
     # if level == 'hard':
     #     plt.ylim(0, 0.6)
-    plt.legend(handles=lines_0, bbox_to_anchor=(0.5, 1.0), loc='center')
+    plt.legend(handles=lines_0, bbox_to_anchor=(0.5, 1.05), loc='center', ncol=2)
     plt.xlabel("Hours")
     if shown_type=='acc':
         plt.ylabel("Accuracy")
@@ -526,32 +527,37 @@ if __name__ == "__main__":
 
     if args.difficulty == 'easy':
         # easy
-        graph1 = read_file(text_file="./saved/easy/train9_ae_prelu.log", defaut_gap=55/3600)# ae + san
+        # graph1 = read_file(text_file="./saved/easy/train9_ae_prelu.log", defaut_gap=55/3600)# ae + san
+        graph1 = read_file(text_file='./train_easy_convolve_cf_old.log')
         graph2 = read_file(text_file="./saved/easy/based_easy/train_based_easy.log") # base
-        graph3 = read_file(text_file="./saved/easy/train_san_prelu_easy.log", defaut_gap=55/3600) # san
-        graph4 = read_file(text_file="./train_easy_convolve_ae.log")
-        # graph5 = read_file(text_file="./saved/convolve/train_easy_convolve.log")
-        graph5 = read_file(text_file="../FFT_VLN_Vizdoom/saved/fourier_models/single_goal/easy/train_easy_forier_d1.log")
+        # graph3 = read_file(text_file="./saved/easy/train_san_prelu_easy.log", defaut_gap=55/3600) # san
+        graph3 = read_file(text_file="./saved/convolve/train_easy_convolve.log")
+        graph4 = read_file(text_file="./train_easy_convolve_cf_new.log")
+        graph5 = read_file(text_file="./saved/convolve/train_easy_convolve_ae.log")
+        
+        # graph5 = read_file(text_file="../FFT_VLN_Vizdoom/saved/fourier_models/single_goal/easy/train_easy_forier_d1.log")
         # plot
         if args.plot1:
             plot_graph(graph1, graph2, graph3, label1='SAN + AE easy', label2="Gated-attention easy", label3='SAN easy', level='easy', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['SAN + AE easy', 'GA easy', "SAN easy", "CA+AE easy", "CA easy"], level='easy', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['CFCA old easy', 'GA easy', "CA easy", "CFCA new easy", "CA+AE easy"], level='easy', shown_type=args.type)
             # plot_graph_2(graphs=[graph4, graph5], labels=["FAN easy", 'FAN + AE easy'], level='easy', shown_type=args.type)
     elif args.difficulty == 'medium':
         # medium
-        graph1 = read_file(text_file="./saved/medium/ae_san_medium/train_medium_ae_prelu.log", defaut_gap=70/3600)
-        graph2 = read_file(text_file="./saved/medium/based_medium/train8_medium.log")
-        graph3 = read_file(text_file="./saved/medium/san_medium/train_san_prelu_medium.log")
-        graph4 = read_file(text_file="./saved/convolve/train_medium_convolve_ae.log") # forget to change name
-        graph5 = read_file(text_file="./saved/convolve/train_medium_convolve.log")
-        graph6 = read_file(text_file="../FFT_VLN_Vizdoom/saved/fourier_models/single_goal/medium/train_medium_forier_d1.log")
+        # graph1 = read_file(text_file="./saved/medium/ae_san_medium/train_medium_ae_prelu.log", defaut_gap=70/3600)
+        graph1 = read_file(text_file='./saved/cf_convolve/train_medium_cfconvolve.log')
+        graph2 = read_file(text_file="./saved/medium/based_medium/train8_medium.log") #base
+        # graph3 = read_file(text_file="./saved/medium/san_medium/train_san_prelu_medium.log")
+        graph3 = read_file(text_file="./saved/convolve/train_medium_convolve_ae.log")
+        graph4 = read_file(text_file="./saved/convolve/train_medium_convolve.log")
+        graph5 = read_file(text_file="./train_medium_cfconvolve_ae.log")
+        # graph5 = read_file(text_file="../FFT_VLN_Vizdoom/saved/fourier_models/single_goal/medium/train_medium_forier_d1.log")
 
         # plot
         if args.plot1:
-            plot_graph(graph1, graph2, graph3, label1='SAN + AE medium', label2="Gated-attention medium", label3='SAN medium', level='medium', shown_type=args.type)
+            plot_graph(graph1, graph2, graph3, label1='CFCA medium', label2="GA medium", label3='SAN medium', level='medium', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5, graph6], labels=['SAN + AE medium', 'GA medium', "SAN medium", 'CA+AE medium','CA medium', 'FGA medium'], level='medium', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['CFCA medium', 'GA medium', "CA+AE medium", 'CA medium', 'CFCA+AE medium'], level='medium', shown_type=args.type)
     elif args.difficulty == 'hard':
         # hard
         graph1 = read_file(text_file="./saved/hard/ae_san_hard/train_hard_ae_prelu.log", defaut_gap=68/3600)#ae + san
