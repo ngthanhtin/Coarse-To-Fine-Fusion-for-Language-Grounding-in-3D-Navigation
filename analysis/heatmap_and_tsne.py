@@ -10,7 +10,7 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 
-root = "train_sentence_emb/ae/"
+root = "../DeepRL-Grounding/train_sentence_emb/ae/"
 emb_file = open(root + "abc.txt", "r")
 embs_string = []
 lines = emb_file.readlines()
@@ -157,23 +157,24 @@ import matplotlib.pyplot as plt
 
 labels = []
 for sent in new_sentences:
-    labels.append(sent)
+    appended_sent = sent.replace("Go to the ", "")
+    labels.append(appended_sent)
 
-# fig, ax = plt.subplots(figsize=(20,20))
-# cax = ax.matshow(sim_matrix, interpolation='nearest')
-# ax.grid(True)
+fig, ax = plt.subplots(figsize=(30,30))
+cax = ax.matshow(sim_matrix, interpolation='nearest')
+ax.grid(True)
 
-# ax.tick_params(axis="x", bottom=True, top=False, labelbottom=True, labeltop=False)
-# plt.title('Instruction Vector Cosine Similarity matrix')
-# plt.xticks(range(len(new_sentences)), labels, rotation=90, fontsize=7)
-# plt.yticks(range(len(new_sentences)), labels, fontsize=7)
-# plt.gcf().subplots_adjust(bottom=0.2)
-# fig.colorbar(cax, ticks=[-0.39, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1])
+ax.tick_params(axis="x", bottom=True, top=False, labelbottom=True, labeltop=False)
+plt.title('Instruction Vector Cosine Similarity matrix')
+plt.xticks(range(len(new_sentences)), labels, rotation=90, fontsize=7)
+plt.yticks(range(len(new_sentences)), labels, rotation=0, fontsize=7)
+plt.gcf().subplots_adjust(bottom=0.2)
+fig.colorbar(cax, ticks=[-0.39, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1])
 # fig.colorbar(cax, ticks=[0.1, 2, 3, 4, 0.5, 0.6, 0.7, .75,.8,.85,.90,.95,17][::-1])
-# plt.show()
+plt.show()
 
 
-# exit()
+exit()
 #sort by color:  blue, red,  green ,yellow
 def sort_color(sentences, embs, color):
     new_sentences = []
