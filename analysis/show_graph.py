@@ -323,6 +323,7 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
         print("Wrong!!!")
         return
     colors = ['darkred', 'green', 'blue', 'red', "darkorange", "purple"]
+    colors = ['green', 'blue', 'red', "darkorange", "purple"]
     
     times = []
     rewards = []
@@ -370,23 +371,23 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
         weights_lb.append(tmp_weights_lb)
 
     if level == 'easy':
-        weights[1] = weights[1][:-200]
-        times[1] = times[1][:-200]
+        weights[0] = weights[0][:-200]
+        times[0] = times[0][:-200]
     if level == 'medium':
         #weights[0] = weights[0][:-110] # san + ae
         #times[0] = times[0][:-110]
 
-        weights[1] = weights[1][:7170] # based
-        times[1] = times[1][:7170]
+        weights[0] = weights[0][:7170] # based
+        times[0] = times[0][:7170]
         
         # weights[2] = weights[2][:6955] # san only
         # times[2] = times[2][:6955]
     if level == 'hard':
-        weights[0] = weights[0][:-800]
-        times[0] = times[0][:-800]
+        # weights[0] = weights[0][:-800]
+        # times[0] = times[0][:-800]
         
-        weights[1] = weights[1][:10000] #based
-        times[1] = times[1][:10000]
+        weights[0] = weights[0][:10000] #based
+        times[0] = times[0][:10000]
 
     #plot the max dashed lines
     # points1 = np.ones(int(max(times1)))
@@ -427,30 +428,40 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
                   fontsize=7, fontdict={'family': 'monospace'})
     
     # easy
-    # plt.text(times[1][times_max_index[1]], weights_max[1] + 0.02, "(" + repr(round(weights_max[1], 3)) + ", " + repr(int(times[1][times_max_index[1]])) + ")", **text_style)
-    # plt.plot((0, times[1][times_max_index[1]]), (weights_max[1], weights_max[1]), color = 'black', linestyle='dashed') # horizontal
-    # plt.text(0, weights_max[1], "0.897", **text_style)
-    # plt.plot((times[1][times_max_index[1]], times[1][times_max_index[1]]), (0.03, weights_max[1]), color = 'black', linestyle='dashed')# vertical 1
-    # plt.text(times[1][times_max_index[1]] + 2, 0.01, "101", **text_style)
-    # plt.plot((13.3, 13.3), (0.03, weights_max[1]), color = 'black', linestyle='dashed')# vertical 2
-    # plt.text(13.3 + 2, 0.01, "13.3", **text_style)
+    # plt.plot((0, times[0][times_max_index[0]]), (weights_max[0], weights_max[0]), color = 'black', linestyle='dashed') # horizontal
+    # plt.text(0, weights_max[0], "0.897", **text_style)
+    # plt.plot((times[0][times_max_index[0]], times[0][times_max_index[0]]), (0.03, weights_max[0]), color = 'black', linestyle='dashed')# vertical 1
+    # plt.text(times[0][times_max_index[0]] + 2, 0.01, "101", **text_style)
+    # plt.plot((43.4, 43.4), (0.03, 0.896), color = 'black', linestyle='dashed')# vertical 2
+    # plt.text(43 + 2, 0.01, "43.4", **text_style)
+    # plt.plot((15.6, 15.6), (0.03, 0.896), color = 'black', linestyle='dashed')# vertical 3
+    # plt.text(times[2][times_max_index[2]] + 2, 0.01, "15.6", **text_style)
+    # plt.plot((10.9, 10.9), (0.03, 0.896), color = 'black', linestyle='dashed')# vertical 4
+    # plt.text(12.3, 0.01, "11", **text_style)
 
     # medium
-    # plt.text(times[1][times_max_index[1]], weights_max[1] + 0.02, "(" + repr(round(weights_max[1], 3)) + ", " + repr(int(times[1][times_max_index[1]])) + ")", **text_style)
-    # plt.text(0, weights_max[1]-0.01, "0.79", **text_style)
-    # plt.plot((0, times[1][times_max_index[1]]), (weights_max[1], weights_max[1]), color = 'black', linestyle='dashed') # horizontal
-    # plt.plot((times[1][times_max_index[1]], times[1][times_max_index[1]]), (0.03, weights_max[1]), color = 'black', linestyle='dashed')# vertical 1
-    # plt.text(times[1][times_max_index[1]] + 2, 0.01, "125", **text_style)
-    # plt.plot((34, 34), (0.03, weights_max[1]), color = 'black', linestyle='dashed')# vertical 2
+    # plt.plot((0, times[0][times_max_index[0]]), (weights_max[0], weights_max[0]), color = 'black', linestyle='dashed') # horizontal
+    # plt.text(0, weights_max[0], "0.79", **text_style)
+    # plt.plot((times[0][times_max_index[0]], times[0][times_max_index[0]]), (0.03, weights_max[0]), color = 'black', linestyle='dashed')# vertical 1
+    # plt.text(times[0][times_max_index[0]] + 2, 0.01, "125", **text_style)
+    # plt.plot((80.7, 80.7), (0.03, 0.79), color = 'black', linestyle='dashed')# vertical 2
+    # plt.text(times[1][times_max_index[1]] + 2, 0.01, "80.7", **text_style)
+    # plt.plot((33.7, 33.7), (0.03, 0.79), color = 'black', linestyle='dashed')# vertical 3
     # plt.text(34 + 2, 0.01, "34", **text_style)
+    # plt.plot((31.8, 31.8), (0.03, 0.79), color = 'black', linestyle='dashed')# vertical 4
+    # plt.text(31 + 2, 0.01, "32", **text_style)
+
     # # hard
-    # plt.text(times[1][times_max_index[1]], weights_max[1] + 0.02, "(" + repr(round(weights_max[1], 3)) + ", " + repr(int(times[1][times_max_index[1]])) + ")", **text_style)
-    plt.text(0, weights_max[1], "0.57", **text_style)
-    plt.plot((0, times[1][times_max_index[1]]), (weights_max[1], weights_max[1]), color = 'black', linestyle='dashed') # horizontal
-    plt.plot((times[1][times_max_index[1]], times[1][times_max_index[1]]), (0.03, weights_max[1]), color = 'black', linestyle='dashed')# vertical 1
-    plt.text(times[1][times_max_index[1]] + 2, 0.01, "172", **text_style)
-    plt.plot((26.9, 26.9), (0.03, weights_max[1]), color = 'black', linestyle='dashed')# vertical 2
-    plt.text(26.9 + 2, 0.01, "26.9", **text_style)
+    plt.plot((0, times[0][times_max_index[0]]), (weights_max[0], weights_max[0]), color = 'black', linestyle='dashed') # horizontal
+    plt.text(0, weights_max[0], "0.57", **text_style)
+    plt.plot((times[0][times_max_index[0]], times[0][times_max_index[0]]), (0.03, weights_max[0]), color = 'black', linestyle='dashed')# vertical 1
+    plt.text(times[0][times_max_index[0]] + 2, 0.01, "172", **text_style)
+    plt.plot((129, 129), (0.03, 0.57), color = 'black', linestyle='dashed')# vertical 2
+    plt.text(129 + 2, 0.01, "129", **text_style)
+    plt.plot((84.6, 84.6), (0.03, 0.57), color = 'black', linestyle='dashed')# vertical 3
+    plt.text(84.6 + 2, 0.01, "84.6", **text_style)
+    plt.plot((33, 33), (0.03, 0.57), color = 'black', linestyle='dashed')# vertical 4
+    plt.text(33 + 2, 0.01, "33", **text_style)
 
     #plot shade
     times_clone = []
@@ -480,8 +491,8 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
     # lines_0 = [lines[1][0], lines[3][0], lines[4][0]]
     #set limit for y axis
     plt.ylim(0, 1)
-    # if level == 'hard':
-    #     plt.ylim(0, 0.6)
+    if level == 'hard':
+        plt.ylim(0, 0.6)
     plt.legend(handles=lines_0, bbox_to_anchor=(0.5, 1.05), loc='center', ncol=2)
     plt.xlabel("Hours")
     if shown_type=='acc':
@@ -527,50 +538,39 @@ if __name__ == "__main__":
 
     if args.difficulty == 'easy':
         # easy
-        # graph1 = read_file(text_file="./saved/easy/train9_ae_prelu.log", defaut_gap=55/3600)# ae + san
-        graph1 = read_file(text_file='./train_easy_convolve_cf_old.log')
-        graph2 = read_file(text_file="./saved/easy/based_easy/train_based_easy.log") # base
-        # graph3 = read_file(text_file="./saved/easy/train_san_prelu_easy.log", defaut_gap=55/3600) # san
-        graph3 = read_file(text_file="./saved/convolve/train_easy_convolve.log")
-        graph4 = read_file(text_file="./train_easy_convolve_cf_new.log")
-        graph5 = read_file(text_file="./saved/convolve/train_easy_convolve_ae.log")
-        
-        # graph5 = read_file(text_file="../FFT_VLN_Vizdoom/saved/fourier_models/single_goal/easy/train_easy_forier_d1.log")
+        graph1 = read_file(text_file="./saved/easy/based_easy/train_based_easy.log") # base
+        graph2 = read_file(text_file="./saved/convolve/train_easy_convolve.log")
+        graph3 = read_file(text_file="./saved/cf_convolve/train_easy_convolve_cf.log")
+        graph4 = read_file(text_file="./saved/cf_convolve/train_easy_convolve_cf_ae.log")
+
         # plot
         if args.plot1:
             plot_graph(graph1, graph2, graph3, label1='SAN + AE easy', label2="Gated-attention easy", label3='SAN easy', level='easy', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['CFCA old easy', 'GA easy', "CA easy", "CFCA new easy", "CA+AE easy"], level='easy', shown_type=args.type)
-            # plot_graph_2(graphs=[graph4, graph5], labels=["FAN easy", 'FAN + AE easy'], level='easy', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4], labels=['GA easy', 'CA easy', "CFCA easy", "CFCA+AE easy"], level='easy', shown_type=args.type)
     elif args.difficulty == 'medium':
         # medium
-        # graph1 = read_file(text_file="./saved/medium/ae_san_medium/train_medium_ae_prelu.log", defaut_gap=70/3600)
-        graph1 = read_file(text_file='./saved/cf_convolve/train_medium_cfconvolve.log')
-        graph2 = read_file(text_file="./saved/medium/based_medium/train8_medium.log") #base
-        # graph3 = read_file(text_file="./saved/medium/san_medium/train_san_prelu_medium.log")
-        graph3 = read_file(text_file="./saved/convolve/train_medium_convolve_ae.log")
-        graph4 = read_file(text_file="./saved/convolve/train_medium_convolve.log")
-        graph5 = read_file(text_file="./train_medium_cfconvolve_ae.log")
-        # graph5 = read_file(text_file="../FFT_VLN_Vizdoom/saved/fourier_models/single_goal/medium/train_medium_forier_d1.log")
+        graph1 = read_file(text_file="./saved/medium/based_medium/train8_medium.log") #base
+        graph2 = read_file(text_file="./saved/convolve/train_medium_convolve.log")
+        graph3 = read_file(text_file='./saved/cf_convolve/train_medium_cfconvolve.log')
+        graph4 = read_file(text_file="./saved/cf_convolve/train_medium_cfconvolve_ae.log")
 
         # plot
         if args.plot1:
             plot_graph(graph1, graph2, graph3, label1='CFCA medium', label2="GA medium", label3='SAN medium', level='medium', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5], labels=['CFCA medium', 'GA medium', "CA+AE medium", 'CA medium', 'CFCA+AE medium'], level='medium', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4], labels=['GA medium', 'CA medium', "CFCA medium", 'CFCA+AE medium'], level='medium', shown_type=args.type)
     elif args.difficulty == 'hard':
         # hard
-        graph1 = read_file(text_file="./saved/hard/ae_san_hard/train_hard_ae_prelu.log", defaut_gap=68/3600)#ae + san
-        graph2 = read_file(text_file="./saved/hard/based_hard/train_based_hard.log", defaut_gap=62/3600) # train_hard base
-        graph3 = read_file(text_file="./saved/hard/san_hard/train_san_prelu_hard.log", defaut_gap=64/3600)#, defaut_gap=60/3600)#
-        graph4 = read_file(text_file="./saved/convolve/train_hard_convolve.log")
-        graph6 = read_file(text_file="./train_hard_convolve_ae.log")
-        graph5 = read_file(text_file='../FFT_VLN_Vizdoom/saved/fourier_models/single_goal/hard/train_hard_forier_d1.log')
+        graph1 = read_file(text_file="./saved/hard/based_hard/train_based_hard.log", defaut_gap=62/3600) # train_hard base
+        graph2 = read_file(text_file="./saved/convolve/train_hard_convolve.log")
+        graph3 = read_file(text_file="./saved/cf_convolve/train_hard_cfconvolve.log")
+        graph4 = read_file(text_file="./saved/cf_convolve/train_hard_convolve_cf_ae.log")
         #plot
         if args.plot1:
             plot_graph(graph1, graph2, graph3, label1='SAN + AE hard', label2="Gated-attention hard", label3='SAN hard', level='hard', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5, graph6], labels=['SAN + AE hard', 'GA hard', "SAN hard", 'CA hard', 'DA hard', 'CA+AE hard'], level='hard', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4], labels=['GA hard', 'CA hard', 'CFCA hard', 'CFCA+AE hard'], level='hard', shown_type=args.type)
 
     # print("Based easy (MT): ", calculate_mean_reward_and_acc('./saved/based_easy/test_MT_based_easy.log'))
     # print("Based easy (ZSL): ", calculate_mean_reward_and_acc('./saved/based_easy/test_ZSL_based_easy.log'))

@@ -46,5 +46,5 @@ class CF_ConvolvedAttention(nn.Module):
                 self.attention_maps = attention
             else:
                 self.attention_maps = torch.cat([self.attention_maps, attention], 0)
-        
+
         return self.attention_maps
