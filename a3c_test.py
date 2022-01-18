@@ -9,7 +9,7 @@ from ae.auto_encoder import Auto_Encoder_Model_PReLu
 from utils.constants import *
 
 device='cpu'
-log_file = 'train_easy_convolve_cf.log'
+log_file = 'train_hard_cfconvolve_test.log'
 
 def test(rank, args, shared_model):
 
@@ -31,7 +31,7 @@ def test(rank, args, shared_model):
     model.eval()
 
     (image, depth, instruction), _, _ = env.reset()
-    
+    print(instruction)
     # depth =np.expand_dims(depth, axis=0)
     # image = np.concatenate((image, depth), axis=0)
 
@@ -110,6 +110,7 @@ def test(rank, args, shared_model):
         reward_sum += reward    
 
         if done:
+            print(reward)
             num_episode += 1
             rewards_list.append(reward_sum)
             # Print reward while evaluating and visualizing
@@ -141,7 +142,7 @@ def test(rank, args, shared_model):
                         "Best Reward {}\n".format(best_reward)]))
                 if np.mean(rewards_list) >= best_reward and args.evaluate == 0:
                     torch.save(model.state_dict(),
-                               args.dump_location+"train_easy_convolve_cf")
+                               args.dump_location+"train_hard_cfconvolve")
 
                     best_reward = np.mean(rewards_list)
 
@@ -151,7 +152,7 @@ def test(rank, args, shared_model):
             reward_sum = 0
             episode_length = 0
             (image, depth, instruction), _, _ = env.reset()
-            
+            print(instruction)
             # depth =np.expand_dims(depth, axis=0)
             # image = np.concatenate((image, depth), axis=0)
             # Print instruction while evaluating and visualizing
