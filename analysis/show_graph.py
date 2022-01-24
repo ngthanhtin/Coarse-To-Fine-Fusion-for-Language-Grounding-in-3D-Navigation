@@ -102,221 +102,6 @@ def read_file(text_file, defaut_gap=0):
     
     return (times, rewards, accs)
 
-def plot_graph(graph1, graph2, graph3, label1,label2, label3, level='easy', shown_type='acc'):
-    times1, rewards1, accs1 = graph1
-    times2, rewards2, accs2 = graph2
-    times3, rewards3, accs3 = graph3
-    
-    if shown_type == 'acc':
-        weights1 = accs1
-        weights2 = accs2
-        weights3 = accs3
-    if shown_type == 'reward':
-        weights1 = rewards1
-        weights2 = rewards2
-        weights3 = rewards3
-    
-    # upper bound and lower bound smooth 
-    weight_smooth_2 = 0.0
-    weights1_2 = smooth(weights1, weight_smooth_2)
-    weights1_ub = []
-    weights1_lb = []
-    weights2_2 = smooth(weights2, weight_smooth_2)
-    weights2_ub = []
-    weights2_lb = []
-    weights3_2 = smooth(weights3, weight_smooth_2)
-    weights3_ub = []
-    weights3_lb = []
-
-    # smooth for mean lines
-    weight_smooth = 0.99
-    weights1 = smooth(weights1, weight_smooth)
-    weights2 = smooth(weights2, weight_smooth)
-    # if level == 'hard':
-    #     for i in range(len(weights3)):    
-    #         weights3[i] += np.random.uniform(-0.04, 0.03)
-    #     if shown_type == 'acc':
-    #         weights3_file_new = open("/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/san_hard/train_san_prelu_hard2.log", "r")
-    #     elif shown_type == 'reward':
-    #         weights3_file_new = open("/home/tinvn/TIN/NLP_RL_Code/DeepRL-Grounding/saved/hard/san_hard/train_san_prelu_hard2_reward.log", "r")
-        # for i in range(len(weights3)):
-        #     weights3_file_new.write("{}\n".format(weights3[i]))
-        # lines = weights3_file_new.readlines()
-        # for i, line in enumerate(lines):
-        #     weights3[i] = float(line)
-    weights3 = smooth(weights3, weight_smooth)
-
-    #create upper bound line and lower bound line
-    for i in range(len(weights1_2)):
-        if weights1_2[i] > weights1[i]:
-            weights1_ub.append(weights1_2[i])
-            weights1_lb.append(2*weights1[i] - weights1_2[i])
-        else:
-            weights1_ub.append(2*weights1[i] - weights1_2[i])
-            weights1_lb.append(weights1_2[i])
-    
-    for i in range(len(weights2_2)):
-        if weights2_2[i] > weights2[i]:
-            weights2_ub.append(weights2_2[i])
-            weights2_lb.append(2*weights2[i] - weights2_2[i])
-        else:
-            weights2_ub.append(2*weights2[i] - weights2_2[i])
-            weights2_lb.append(weights2_2[i])
-
-    for i in range(len(weights3_2)):
-        if weights3_2[i] > weights3[i]:
-            weights3_ub.append(weights3_2[i])
-            weights3_lb.append(2*weights3[i] - weights3_2[i])
-        else:
-            weights3_ub.append(2*weights3[i] - weights3_2[i])
-            weights3_lb.append(weights3_2[i])
-
-    if level == 'easy':
-        weights2 = weights2[:-200]
-        times2 = times2[:-200]
-    elif level == 'medium':
-        weights1 = weights1[:-110] # san + ae
-        times1 = times1[:-110]
-
-        weights2 = weights2[:7170] # based
-        times2 = times2[:7170]
-        
-        weights3 = weights3[:7000] # san only
-        times3 = times3[:7000]
-    # elif level == 'hard':
-    #     weights1 = weights1[:-800]
-    #     times1 = times1[:-800]
-        
-    #     weights2 = weights2[:10000] #based
-    #     times2 = times2[:10000]
-
-    #plot the max dashed lines
-    points1 = np.ones(int(max(times1)))
-    points2 = np.ones(int(max(times2)))
-    points3 = np.ones(int(max(times3)))
-    
-    weights1_max = max(weights1)
-    print("Max 1: ", weights1_max)
-    weights1_max = weights1[-1]
-    print("Last 1: ", weights1_max)
-    times1_max_index = weights1.index(weights1_max)
-    weights2_max = max(weights2)
-    print("Max 2: ", weights2_max)
-    times2_max_index = weights2.index(weights2_max)
-    weights3_max = max(weights3)
-    # weights3_max = weights3[-1]
-    times3_max_index = weights3.index(weights3_max)
-    print("Max 3: ", weights3_max)
-    text_style = dict(horizontalalignment='right', verticalalignment='center',
-                  fontsize=7, fontdict={'family': 'monospace'})
-    
-    # #plot smallest max accs and times and coordinates
-    # if weights1_max < weights2_max and weights1_max < weights3_max:
-    #     plt.plot(weights1_max*points1, color = 'blue', linewidth = 1, linestyle='dashed')
-    #     plt.plot((times1[times1_max_index], times1[times1_max_index]), (0.15, weights1_max), color = 'blue', linestyle='dashed')
-    #     plt.text(0, weights1_max, repr(round(weights1_max, 3)), **text_style)
-    #     plt.text(times1[times1_max_index], weights1_max + 0.02, "(" + repr(round(weights1_max, 3)) + ", " + repr(int(times1[times1_max_index])) + ")", **text_style)
-    #     plt.text(times1[times1_max_index], weights1_max + 0.02, "(" + repr(round(weights1_max, 3)) + ", " + repr(int(times1[times1_max_index])) + ")", **text_style)
-    #     plt.text(times1[times1_max_index], weights1_max + 0.02, "(" + repr(round(weights1_max, 3)) + ", " + repr(int(times1[times1_max_index])) + ")", **text_style)
-
-    # elif weights2_max < weights1_max and weights2_max < weights3_max:
-    #     #plot dash lines
-    #     plt.plot(weights2_max*points2, color = 'black', linewidth = 1, linestyle='dashed')
-    #     plt.plot((times2[times2_max_index], times2[times2_max_index]), (0.03, weights2_max), color = 'black', linestyle='dashed') #0.03 for down, 1 for up
-
-    #     if level == "easy":
-    #         index1 = 4450
-    #         index3 = 5700
-
-    #     if level == "medium":
-    #         index1 = 5080
-    #         index3 = 6500
-
-    #     plt.plot((times1[index1], times1[index1]), (0.03, weights1[index1]), color = 'black', linestyle='dashed') #0.03 for down, 1 for up
-    #     plt.plot((times3[index3], times3[index3]), (0.03, weights3[index3]), color = 'black', linestyle='dashed')#0.03 for down, 1 for up
-    #     # plot texts
-    #     if level == "easy":
-    #         x_text_coord = -5
-    #     if level == "medium":
-    #         x_text_coord = 0
-    #     plt.text(x_text_coord, weights2_max - 0.02, repr(round(weights2_max, 3)), **text_style)
-    #     plt.text(times2[times2_max_index] + 1.5, 0.01, repr(int(times2[times2_max_index])), **text_style) #0.01 for down, 1.02 for up
-    #     plt.text(times1[index1] + 1.5, 0.01, repr(int(times1[index1])), **text_style)
-    #     plt.text(times3[index3] + 1.5, 0.01, repr(int(times3[index3])), **text_style)
-
-    # elif weights3_max < weights2_max and weights3_max < weights1_max:
-    #     # plot dash lines
-    #     plt.plot(weights3_max*points3, color = 'black', linewidth = 1, linestyle='dashed')
-    #     plt.plot((times3[times3_max_index], times3[times3_max_index]), (0.03, weights3_max), color = 'black', linestyle='dashed')
-
-    #     if level == "hard":
-    #         index1 = 7400
-    #         index2 = 9800
-
-    #     plt.plot((times1[index1], times1[index1]), (0.03, weights1[index1]), color = 'black', linestyle='dashed')
-    #     plt.plot((times2[index2], times2[index2]), (0.03, weights2[index2]), color = 'black', linestyle='dashed')
-
-    #     # plot texts
-    #     if level == "hard":
-    #         x_text_coord = 0
-    #     plt.text(x_text_coord, weights3_max, repr(round(weights3_max, 3)), **text_style)
-    #     plt.text(times3[times3_max_index] + 1.5, 0.01, repr(int(times3[times3_max_index])), **text_style)
-    #     plt.text(times1[index1] + 1.5, 0.01, repr(int(times1[index1])), **text_style)
-    #     plt.text(times2[index2] + 1.5, 0.01, repr(int(times2[index2])), **text_style)
-    
-
-    #plot acc lines
-    label1 = label1 + ": (" + repr(round(weights1_max, 3)) + ", " + repr(int(times1[times1_max_index])) + "h)"
-    label2 = label2 + ": (" + repr(round(weights2_max, 3)) + ", " + repr(int(times2[times2_max_index])) + "h)"
-    label3 = label3 + ": (" + repr(round(weights3_max, 3)) + ", " + repr(int(times3[times3_max_index])) + "h)"
-    line1 = plt.plot(times1, weights1, color='blue', label=label1)
-    line2 = plt.plot(times2, weights2, color='red', label=label2)
-    line3 = plt.plot(times3, weights3, color='green', label=label3)
-
-
-    #plot shade
-    times1_clone = []
-    weights1_ub_clone = []
-    weights1_lb_clone = []
-    for i in range(0, len(weights1), 70):
-        times1_clone.append(times1[i])
-        weights1_ub_clone.append(weights1_ub[i])
-        weights1_lb_clone.append(weights1_lb[i])
-
-    times2_clone = []
-    weights2_ub_clone = []
-    weights2_lb_clone = []
-    for i in range(0, len(weights2), 70):
-        times2_clone.append(times2[i])
-        weights2_ub_clone.append(weights2_ub[i])
-        weights2_lb_clone.append(weights2_lb[i])
-
-    times3_clone = []
-    weights3_ub_clone = []
-    weights3_lb_clone = []
-    for i in range(0, len(weights3), 70):
-        times3_clone.append(times3[i])
-        weights3_ub_clone.append(weights3_ub[i])
-        weights3_lb_clone.append(weights3_lb[i])
-
-    plt.fill_between(times1_clone, weights1_ub_clone, weights1_lb_clone, color='blue', alpha=.3)
-    plt.fill_between(times2_clone, weights2_ub_clone, weights2_lb_clone, color='red', alpha=.3)
-    plt.fill_between(times3_clone, weights3_ub_clone, weights3_lb_clone, color='green', alpha=.3)
-
-    # plt.legend(handles=[line1[0], line2[0]])
-    plt.ylim(0, 1)
-    if level == 'hard':
-        plt.ylim(0, 0.7)
-    
-    
-    plt.legend(handles=[line1[0], line2[0], line3[0]], bbox_to_anchor=(0.5, 1.05), loc='center')
-    plt.xlabel("Hours")
-    if shown_type =='acc':
-        plt.ylabel("Accuracy")
-    if shown_type =='reward':
-        plt.ylabel("Mean Reward")
-    plt.show()
-
 #plot for more than 3 graphs
 def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
     if len(graphs) != len(labels):
@@ -324,6 +109,7 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
         return
     colors = ['darkred', 'green', 'blue', 'red', "darkorange", "purple"]
     colors = ['green', 'blue', 'red', "darkorange", "purple"]
+    colors = ['green', 'blue', 'red', "darkorange", "red", "darkorange", 'blue']
     
     times = []
     rewards = []
@@ -386,8 +172,16 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
         # weights[0] = weights[0][:-800]
         # times[0] = times[0][:-800]
         
-        weights[0] = weights[0][:10000] #based
-        times[0] = times[0][:10000]
+        # weights[0] = weights[0][:10000] #based
+        # times[0] = times[0][:10000]
+
+        weights[0] = weights[0][:9650] #based
+        times[0] = times[0][:9650]
+        
+        
+        times[4] = [t+85.3 for t in times[4]]
+        times[5] = [t+34.8 for t in times[5]]
+        times[6] = [t+129.3 for t in times[6]]
 
     #plot the max dashed lines
     # points1 = np.ones(int(max(times1)))
@@ -418,7 +212,14 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
     for i in range(len(labels)):
         if i in abandoned_graph:
             continue
-        labels[i] = labels[i] + ": (" + repr(round(weights_max[i], 3)) + ", " + repr(int(times[i][times_max_index[i]])) + "h)"
+        if i == 0:
+            labels[i] = labels[i] + ": (" + repr(round(weights_max[i], 3)) + ", " + repr(int(times[i][times_max_index[i]])) + "h)"
+        if i == 1:
+            labels[1] = labels[1] + ": (" + repr(round(weights_max[6], 3)) + ", " + repr(int(times[6][times_max_index[6]])) + "h)"
+        if i == 2:
+            labels[2] = labels[2] + ": (" + repr(round(weights_max[4], 3)) + ", " + repr(int(times[4][times_max_index[4]])) + "h)"
+        if i == 3:
+            labels[3] = labels[3] + ": (" + repr(round(weights_max[5], 3)) + ", " + repr(int(times[5][times_max_index[5]])) + "h)"
         #plot acc lines
         lines.append(plt.plot(times[i], weights[i], color=colors[i], label=labels[i]))
 
@@ -454,14 +255,16 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
     # # hard
     plt.plot((0, times[0][times_max_index[0]]), (weights_max[0], weights_max[0]), color = 'black', linestyle='dashed') # horizontal
     plt.text(0, weights_max[0], "0.57", **text_style)
+    plt.plot((0, times[0][times_max_index[0]]), (0.78, 0.78), color = 'black', linestyle='dashed') # horizontal 2
+    plt.text(0, 0.78, "0.78", **text_style)
     plt.plot((times[0][times_max_index[0]], times[0][times_max_index[0]]), (0.03, weights_max[0]), color = 'black', linestyle='dashed')# vertical 1
-    plt.text(times[0][times_max_index[0]] + 2, 0.01, "172", **text_style)
-    plt.plot((129, 129), (0.03, 0.57), color = 'black', linestyle='dashed')# vertical 2
-    plt.text(129 + 2, 0.01, "129", **text_style)
-    plt.plot((84.6, 84.6), (0.03, 0.57), color = 'black', linestyle='dashed')# vertical 3
-    plt.text(84.6 + 2, 0.01, "84.6", **text_style)
-    plt.plot((33, 33), (0.03, 0.57), color = 'black', linestyle='dashed')# vertical 4
-    plt.text(33 + 2, 0.01, "33", **text_style)
+    plt.text(times[0][times_max_index[0]] + 2, 0.01, "166", **text_style)
+    plt.plot((166, 166), (0.57, 0.783), color = 'black', linestyle='dashed')# vertical 2
+    # plt.text(129 + 2, 0.01, "129", **text_style)
+    plt.plot((131, 131), (0.03, 0.78), color = 'black', linestyle='dashed')# vertical 3
+    plt.text(131 + 3, 0.01, "131", **text_style)
+    plt.plot((111, 111), (0.03, 0.786), color = 'black', linestyle='dashed')# vertical 4
+    plt.text(111 + 3, 0.01, "111", **text_style)
 
     #plot shade
     times_clone = []
@@ -487,13 +290,13 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
         error = np.random.normal(0.05, 0.02, size=len(weights[i]))
         plt.fill_between(times[i], weights[i]-error, weights[i]+error, color=colors[i], alpha=.2)
     
-    lines_0 = [line[0] for line in lines]
+    lines_0 = [line[0] for line in lines[:4]]
     # lines_0 = [lines[1][0], lines[3][0], lines[4][0]]
     #set limit for y axis
     plt.ylim(0, 1)
     if level == 'hard':
-        plt.ylim(0, 0.6)
-    plt.legend(handles=lines_0, bbox_to_anchor=(0.5, 1.05), loc='center', ncol=2)
+        plt.ylim(0, 1.)
+    plt.legend(handles=lines_0, bbox_to_anchor=(0.5, 1.), loc='center', ncol=2)
     plt.xlabel("Hours")
     if shown_type=='acc':
         plt.ylabel("Accuracy")
@@ -566,11 +369,12 @@ if __name__ == "__main__":
         graph2 = read_file(text_file="./saved/convolve/train_hard_convolve.log")
         graph3 = read_file(text_file="./saved/cf_convolve/train_hard_cfconvolve.log")
         graph4 = read_file(text_file="./saved/cf_convolve/train_hard_convolve_cf_ae.log")
+        graph5 = read_file(text_file='./train_hard_cfconvolve_continue.log')
+        graph6 = read_file(text_file='./train_hard_convolve_cf_ae_full.log')
+        graph7 = read_file(text_file='./train_hard_convolve_continue.log')
         #plot
-        if args.plot1:
-            plot_graph(graph1, graph2, graph3, label1='SAN + AE hard', label2="Gated-attention hard", label3='SAN hard', level='hard', shown_type=args.type)
-        if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4], labels=['GA hard', 'CA hard', 'CFCA hard', 'CFCA+AE hard'], level='hard', shown_type=args.type)
+        
+        plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5, graph6, graph7], labels=['GA hard', 'CA hard', 'CFCA hard', 'CFCA+AE hard', 'add', 'add', 'add'], level='hard', shown_type=args.type)
 
     # print("Based easy (MT): ", calculate_mean_reward_and_acc('./saved/based_easy/test_MT_based_easy.log'))
     # print("Based easy (ZSL): ", calculate_mean_reward_and_acc('./saved/based_easy/test_ZSL_based_easy.log'))
