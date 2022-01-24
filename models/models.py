@@ -1,13 +1,9 @@
-"""
-Policy Learning models using Hadardmard Attention or Stacked Attention
-"""
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 from language_model.language_model import tfidf_loading, WordEmbedding, SentenceEmbedding
-from attention.san.attention import StackedAttention, StackedAttention_2
 from attention.convolve_attention.attention import ConvolvedAttention
 from attention.convolve_attention.cf_attention import CF_ConvolvedAttention
 from attention.dual_attention.attention import DualAttention
@@ -94,9 +90,6 @@ class A3C_LSTM_GA(torch.nn.Module):
         self.s_emb = SentenceEmbedding(32, 256, 1, False, 0.0, 'GRU')
         
         #attention
-        if args.attention == 'san':
-            self.v_att = StackedAttention(2, 64*8*17, 256 , 256, 2, 0.0)
-            # self.v_att = StackedAttention_2(2, 64, 256, 256, 2, 0)
         if args.attention == 'convolve':
             self.v_att = ConvolvedAttention(5, 8*17, 256, 64) # 5 ,1,8,17
             self.conv_4 = nn.Conv2d(1, 64, kernel_size=3, stride=2)
@@ -115,8 +108,6 @@ class A3C_LSTM_GA(torch.nn.Module):
                 self.time_emb_dim)
 
         # A3C-LSTM layers
-        if args.attention == 'san':
-            self.linear = nn.Linear(256, 256)
         if args.attention == 'convolve':
             self.linear = nn.Linear(960, 256)
         if args.attention == 'cf_convolve':
@@ -171,9 +162,6 @@ class A3C_LSTM_GA(torch.nn.Module):
         w_emb = self.w_emb(input_inst.long())
         s_emb = self.s_emb(w_emb)
         
-        if self.args.attention == "san":
-            x_emb = x_emb.view(1, -1)
-            att = self.v_att(x_emb, s_emb, v_mask=False)
         if self.args.attention == "convolve":
             att = self.v_att(x_emb, s_emb)
             att = self.conv_4(att)
@@ -183,7 +171,7 @@ class A3C_LSTM_GA(torch.nn.Module):
             att = att.view(-1).unsqueeze(0)
         if self.args.attention == "cf_convolve":
             att = self.v_att([x1,x2,x_emb], s_emb) # , w_emb, input_inst
-            plot_attention(att, x, input_inst)
+            # plot_attention(att, x, input_inst)
             att = self.conv_4(att)
             att = self.prelu(att)
             att = self.conv_5(att)
