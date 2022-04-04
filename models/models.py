@@ -34,10 +34,17 @@ def weights_init(m):
         #     m.bias.data.fill_(0)
 
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+
+def figure_to_array(fig):
+    fig.canvas.draw()
+    return np.array(fig.canvas.renderer._renderer)
+
 #Show attention
 def plot_attention(imgs, original_img, text):
     original_img = original_img[0].detach().cpu().numpy().transpose((1, 2, 0))
-    # plt.imshow(original_img, cmap='gray')
+    fig = plt.figure()
     
     imgs = imgs.detach().cpu().numpy().transpose((0, 2, 3, 1))
     # imgs = imgs.sum(0)
@@ -48,12 +55,14 @@ def plot_attention(imgs, original_img, text):
     # plt.imshow(img, cmap='jet', alpha=0.5)
     # plt.tight_layout()
     # plt.show()
-
+    combined_imgs = imgs[0]+imgs[1]+imgs[2]+imgs[3]+imgs[4]
+    combined_imgs = combined_imgs/255.
+    combined_imgs = cv2.resize(combined_imgs, (300, 168))
     for i in range(5):
         img = imgs[i]/255.0
         img = cv2.resize(img, (300, 168))
         plt.imshow(original_img, cmap='gray')
-        plt.imshow(img, cmap='jet', alpha=0.5)
+        plt.imshow(combined_imgs, cmap='jet', alpha=0.5)
         if i == 0:
             no_text = '1st'
         if i == 1:
@@ -64,9 +73,14 @@ def plot_attention(imgs, original_img, text):
             no_text = '4th'
         if i == 4:
             no_text = '5th'
-        plt.text(120, 200, '{} attention map'.format(no_text), fontsize = 11)
+        # plt.text(120, 200, '{} attention map'.format(no_text), fontsize = 11)
         plt.tight_layout()
-        plt.show()
+        # plt.show()
+        if i == 0:
+            saved_image = figure_to_array(fig)
+            saved_image = cv2.cvtColor(saved_image, cv2.COLOR_RGB2BGR)
+            # saved_image = np.frombuffer(canvas.tostring_rgb(), dtype='uint8')
+            return saved_image
 
 class A3C_LSTM_GA(torch.nn.Module):
 
@@ -171,7 +185,7 @@ class A3C_LSTM_GA(torch.nn.Module):
             att = att.view(-1).unsqueeze(0)
         if self.args.attention == "cf_convolve":
             att = self.v_att([x1,x2,x_emb], s_emb) # , w_emb, input_inst
-            # plot_attention(att, x, input_inst)
+            att_img = plot_attention(att, x, input_inst)
             att = self.conv_4(att)
             att = self.prelu(att)
             att = self.conv_5(att)
@@ -198,6 +212,6 @@ class A3C_LSTM_GA(torch.nn.Module):
 
         if self.args.auto_encoder:
             return self.critic_linear(x), self.actor_linear(x), (hx, cx), decoder
-        return self.critic_linear(x), self.actor_linear(x), (hx, cx)
+        return self.critic_linear(x), self.actor_linear(x), (hx, cx), att_img
 
     

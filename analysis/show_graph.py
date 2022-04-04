@@ -214,12 +214,13 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
             continue
         if i == 0:
             labels[i] = labels[i] + ": (" + repr(round(weights_max[i], 3)) + ", " + repr(int(times[i][times_max_index[i]])) + "h)"
-        if i == 1:
-            labels[1] = labels[1] + ": (" + repr(round(weights_max[6], 3)) + ", " + repr(int(times[6][times_max_index[6]])) + "h)"
-        if i == 2:
-            labels[2] = labels[2] + ": (" + repr(round(weights_max[4], 3)) + ", " + repr(int(times[4][times_max_index[4]])) + "h)"
-        if i == 3:
-            labels[3] = labels[3] + ": (" + repr(round(weights_max[5], 3)) + ", " + repr(int(times[5][times_max_index[5]])) + "h)"
+        # only for hard
+        # if i == 1:
+        #     labels[1] = labels[1] + ": (" + repr(round(weights_max[6], 3)) + ", " + repr(int(times[6][times_max_index[6]])) + "h)"
+        # if i == 2:
+        #     labels[2] = labels[2] + ": (" + repr(round(weights_max[4], 3)) + ", " + repr(int(times[4][times_max_index[4]])) + "h)"
+        # if i == 3:
+        #     labels[3] = labels[3] + ": (" + repr(round(weights_max[5], 3)) + ", " + repr(int(times[5][times_max_index[5]])) + "h)"
         #plot acc lines
         lines.append(plt.plot(times[i], weights[i], color=colors[i], label=labels[i]))
 
@@ -241,30 +242,30 @@ def plot_graph_2(graphs, labels, level='easy', shown_type='acc'):
     # plt.text(12.3, 0.01, "11", **text_style)
 
     # medium
-    # plt.plot((0, times[0][times_max_index[0]]), (weights_max[0], weights_max[0]), color = 'black', linestyle='dashed') # horizontal
-    # plt.text(0, weights_max[0], "0.79", **text_style)
-    # plt.plot((times[0][times_max_index[0]], times[0][times_max_index[0]]), (0.03, weights_max[0]), color = 'black', linestyle='dashed')# vertical 1
-    # plt.text(times[0][times_max_index[0]] + 2, 0.01, "125", **text_style)
-    # plt.plot((80.7, 80.7), (0.03, 0.79), color = 'black', linestyle='dashed')# vertical 2
-    # plt.text(times[1][times_max_index[1]] + 2, 0.01, "80.7", **text_style)
-    # plt.plot((33.7, 33.7), (0.03, 0.79), color = 'black', linestyle='dashed')# vertical 3
-    # plt.text(34 + 2, 0.01, "34", **text_style)
-    # plt.plot((31.8, 31.8), (0.03, 0.79), color = 'black', linestyle='dashed')# vertical 4
-    # plt.text(31 + 2, 0.01, "32", **text_style)
+    plt.plot((0, times[0][times_max_index[0]]), (weights_max[0], weights_max[0]), color = 'black', linestyle='dashed') # horizontal
+    plt.text(0, weights_max[0], "0.79", **text_style)
+    plt.plot((times[0][times_max_index[0]], times[0][times_max_index[0]]), (0.03, weights_max[0]), color = 'black', linestyle='dashed')# vertical 1
+    plt.text(times[0][times_max_index[0]] + 2, 0.01, "125", **text_style)
+    plt.plot((80.7, 80.7), (0.03, 0.79), color = 'black', linestyle='dashed')# vertical 2
+    plt.text(times[1][times_max_index[1]] + 2, 0.01, "80.7", **text_style)
+    plt.plot((33.7, 33.7), (0.03, 0.79), color = 'black', linestyle='dashed')# vertical 3
+    plt.text(34 + 2, 0.01, "34", **text_style)
+    plt.plot((31.8, 31.8), (0.03, 0.79), color = 'black', linestyle='dashed')# vertical 4
+    plt.text(31 + 2, 0.01, "32", **text_style)
 
     # # hard
-    plt.plot((0, times[0][times_max_index[0]]), (weights_max[0], weights_max[0]), color = 'black', linestyle='dashed') # horizontal
-    plt.text(0, weights_max[0], "0.57", **text_style)
-    plt.plot((0, times[0][times_max_index[0]]), (0.78, 0.78), color = 'black', linestyle='dashed') # horizontal 2
-    plt.text(0, 0.78, "0.78", **text_style)
-    plt.plot((times[0][times_max_index[0]], times[0][times_max_index[0]]), (0.03, weights_max[0]), color = 'black', linestyle='dashed')# vertical 1
-    plt.text(times[0][times_max_index[0]] + 2, 0.01, "166", **text_style)
-    plt.plot((166, 166), (0.57, 0.783), color = 'black', linestyle='dashed')# vertical 2
-    # plt.text(129 + 2, 0.01, "129", **text_style)
-    plt.plot((131, 131), (0.03, 0.78), color = 'black', linestyle='dashed')# vertical 3
-    plt.text(131 + 3, 0.01, "131", **text_style)
-    plt.plot((111, 111), (0.03, 0.786), color = 'black', linestyle='dashed')# vertical 4
-    plt.text(111 + 3, 0.01, "111", **text_style)
+    # plt.plot((0, times[0][times_max_index[0]]), (weights_max[0], weights_max[0]), color = 'black', linestyle='dashed') # horizontal
+    # plt.text(0, weights_max[0], "0.57", **text_style)
+    # plt.plot((0, times[0][times_max_index[0]]), (0.78, 0.78), color = 'black', linestyle='dashed') # horizontal 2
+    # plt.text(0, 0.78, "0.78", **text_style)
+    # plt.plot((times[0][times_max_index[0]], times[0][times_max_index[0]]), (0.03, weights_max[0]), color = 'black', linestyle='dashed')# vertical 1
+    # plt.text(times[0][times_max_index[0]] + 2, 0.01, "166", **text_style)
+    # plt.plot((166, 166), (0.57, 0.783), color = 'black', linestyle='dashed')# vertical 2
+    # # plt.text(129 + 2, 0.01, "129", **text_style)
+    # plt.plot((131, 131), (0.03, 0.78), color = 'black', linestyle='dashed')# vertical 3
+    # plt.text(131 + 3, 0.01, "131", **text_style)
+    # plt.plot((111, 111), (0.03, 0.786), color = 'black', linestyle='dashed')# vertical 4
+    # plt.text(111 + 3, 0.01, "111", **text_style)
 
     #plot shade
     times_clone = []
@@ -350,7 +351,7 @@ if __name__ == "__main__":
         if args.plot1:
             plot_graph(graph1, graph2, graph3, label1='SAN + AE easy', label2="Gated-attention easy", label3='SAN easy', level='easy', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4], labels=['GA easy', 'CA easy', "CFCA easy", "CFCA+AE easy"], level='easy', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4], labels=['GA easy', 'CA easy', "CF easy", "CF+AE easy"], level='easy', shown_type=args.type)
     elif args.difficulty == 'medium':
         # medium
         graph1 = read_file(text_file="./saved/medium/based_medium/train8_medium.log") #base
@@ -360,9 +361,9 @@ if __name__ == "__main__":
 
         # plot
         if args.plot1:
-            plot_graph(graph1, graph2, graph3, label1='CFCA medium', label2="GA medium", label3='SAN medium', level='medium', shown_type=args.type)
+            plot_graph(graph1, graph2, graph3, label1='CF medium', label2="GA medium", label3='SAN medium', level='medium', shown_type=args.type)
         if args.plot2:
-            plot_graph_2(graphs=[graph1, graph2, graph3, graph4], labels=['GA medium', 'CA medium', "CFCA medium", 'CFCA+AE medium'], level='medium', shown_type=args.type)
+            plot_graph_2(graphs=[graph1, graph2, graph3, graph4], labels=['GA medium', 'CA medium', "CF medium", 'CF+AE medium'], level='medium', shown_type=args.type)
     elif args.difficulty == 'hard':
         # hard
         graph1 = read_file(text_file="./saved/hard/based_hard/train_based_hard.log", defaut_gap=62/3600) # train_hard base
@@ -374,7 +375,7 @@ if __name__ == "__main__":
         graph7 = read_file(text_file='./train_hard_convolve_continue.log')
         #plot
         
-        plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5, graph6, graph7], labels=['GA hard', 'CA hard', 'CFCA hard', 'CFCA+AE hard', 'add', 'add', 'add'], level='hard', shown_type=args.type)
+        plot_graph_2(graphs=[graph1, graph2, graph3, graph4, graph5, graph6, graph7], labels=['GA hard', 'CA hard', 'CF hard', 'CF+AE hard', 'add', 'add', 'add'], level='hard', shown_type=args.type)
 
     # print("Based easy (MT): ", calculate_mean_reward_and_acc('./saved/based_easy/test_MT_based_easy.log'))
     # print("Based easy (ZSL): ", calculate_mean_reward_and_acc('./saved/based_easy/test_ZSL_based_easy.log'))
