@@ -1,20 +1,19 @@
 # Auto Encoder Vision Language Navigation in Vizdoom
-## Using Stacked Attention and Auto-Encoder for Task-Oriented Language Grounding
+## Coarse-To-Fine Fusion for Language Grounding in 3D Navigation
 
-[Using Stacked Attention and Auto-Encoder for Task-Oriented Language Grounding](None)<br />
-Nguyen T.Tin, Kim Yong Guk<br />
+[Coarse-To-Fine Fusion for Language Grounding in 3D Navigation](None)<br />
+Thanh Tin Nguyen, Anh H. Vo, Soo-Mi Choi, Kim Yong Guk <br/>
 Sejong University, Seoul, Korea <br/>
 
 ![example](./docs/example.gif)
 
 ### This repository contains:
-- Code for training an A3C-LSTM agent using Stacked Attention and Auto-Encoder
-- Code for Doom-based language grounding environment
+- Code for training an A3C-LSTM agent using Coarse-To-Fine Fusion for Language Grounding in 3D Navigation
 
 ## Dependencies
 - [ViZDoom](https://github.com/mwydmuch/ViZDoom)
 - [PyTorch](http://pytorch.org)
-- Opencva
+- Opencv
 
 ## Usage
 
@@ -39,22 +38,22 @@ python a3c_main.py --num-processes 4 --evaluate 0 (1) --difficulty easy (medium,
 ```
 
 
-Example training a Stacked Attention and Auto-Encoder A3C-LSTM with  agent with 4 threads:
+Example training a Stacked Attention and Auto-Encoder A3C-LSTM with an agent with 4 threads:
 ```
 python a3c_main.py --num-processes 4 --evaluate 0 (1) --difficulty easy (medium, hard) --auto-encoder --attention san (dual, gated, convolve)
 ```
 
 The code will save the best model at `./saved/`.
 ### Testing
-To the test the pre-trained model for Multitask Generalization:
+To test the pre-trained model for Multitask Generalization:
 ```
 python a3c_main.py --evaluate 1 --load saved/pretrained_model
 ```
-To the test the pre-trained model for Zero-shot Task Generalization:
+To test the pre-trained model for Zero-shot Task Generalization:
 ```
 python a3c_main.py --evaluate 2 --load saved/pretrained_model
 ``` 
-To the visualize the model while testing add '--visualize 1':<br />
+To visualize the model while testing add '--visualize 1':<br />
 ```
 python a3c_main.py --evaluate 2 --load saved/pretrained_model --visualize 1
 ``` 
@@ -62,15 +61,15 @@ To test the trained model, use `--load saved/model_best` in the above commands.
 ```
 
 ## Cite as
->Nguyen T.Tin, Kim Yong Guk, 2022. Using Stacked Attention and Auto-Encoder for Task-Oriented Language Grounding. arXiv preprint arXiv:1706.07230. ([PDF](None))
+>Nguyen T.Tin, Anh H. Vo, Soo-Mi Choi, Kim Yong Guk, 2023. Coarse-To-Fine Fusion for Language Grounding in 3D Navigation. arXiv preprint arXiv:1706.07230. ([PDF](None))
 
 ### Bibtex:
 ```
 @article{zzzzzzzzzzzzzz,
-  title={Using Stacked Attention and Auto-Encoder for Task-Oriented Language Grounding},
-  author={Nguyen T.Tin, Kim Yong Guk},
+  title={Coarse-To-Fine Fusion for Language Grounding in 3D Navigation},
+  author={Nguyen T.Tin, Anh H. Vo, Soo-Mi Choi, Kim Yong Guk},
   journal={arXiv preprint arXiv:1706.07230},
-  year={2022}
+  year={2023}
 }
 ```
 
