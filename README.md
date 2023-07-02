@@ -9,12 +9,6 @@ Sejong University, Seoul, Korea <br/>
   
 </div> 
 
-# Auto Encoder Vision Language Navigation in Vizdoom
-## 
-
-[Coarse-To-Fine Fusion for Language Grounding in 3D Navigation](None)<br />
-Thanh Tin Nguyen, Anh H. Vo, Soo-Mi Choi, Kim Yong Guk <br/>
-Sejong University, Seoul, Korea <br/>
 
 ![example](./docs/example.gif)
 
