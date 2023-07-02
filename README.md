@@ -5,7 +5,7 @@ by [Thanh Tin Nguyen *](https://https://ngthanhtin.github.io/), Anh H. Vo, Soo-M
 Sejong University, Seoul, Korea <br/> 
 
 [![Paper](https://img.shields.io/badge/paper-arxiv.svg)]()
-[![Journal](https://img.shields.io/badge/KBS-2023-4b44ce.svg)](https://www.sciencedirect.com/journal/knowledge-based-systems)
+[![Journal](https://img.shields.io/badge/KBS-2023-4b44ce.svg)](https://www.sciencedirect.com/journal/knowledge-based-systems) <br/>
 ![example](./docs/example.gif)
 </div> 
 
