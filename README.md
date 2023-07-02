@@ -6,11 +6,11 @@ Sejong University, Seoul, Korea <br/>
 
 [![Paper](https://img.shields.io/badge/paper-arxiv.svg)]()
 [![Journal](https://img.shields.io/badge/KBS-2023-4b44ce.svg)](https://www.sciencedirect.com/journal/knowledge-based-systems)
-  
+![example](./docs/example.gif)
 </div> 
 
 
-![example](./docs/example.gif)
+
 
 ### This repository contains:
 - Code for training an A3C-LSTM agent using Coarse-To-Fine Fusion for Language Grounding in 3D Navigation
