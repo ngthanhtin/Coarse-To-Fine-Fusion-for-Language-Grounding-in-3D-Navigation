@@ -1,5 +1,16 @@
+<div align="center"> 
+  
+# Knowledge-based System (2023): Coarse-To-Fine Fusion for Language Grounding in 3D Navigation
+by [Thanh Tin Nguyen *](https://https://ngthanhtin.github.io/), Anh H. Vo, Soo-Mi Choi, and Yong-Guk Kim. <br/>
+Sejong University, Seoul, Korea <br/> 
+
+[![Paper](https://img.shields.io/badge/paper-arxiv.svg)]()
+[![Journal](https://img.shields.io/badge/KBS-2023-4b44ce.svg)](https://www.sciencedirect.com/journal/knowledge-based-systems)
+  
+</div> 
+
 # Auto Encoder Vision Language Navigation in Vizdoom
-## Coarse-To-Fine Fusion for Language Grounding in 3D Navigation
+## 
 
 [Coarse-To-Fine Fusion for Language Grounding in 3D Navigation](None)<br />
 Thanh Tin Nguyen, Anh H. Vo, Soo-Mi Choi, Kim Yong Guk <br/>
