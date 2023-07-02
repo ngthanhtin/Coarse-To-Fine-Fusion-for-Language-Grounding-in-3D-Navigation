@@ -1,6 +1,6 @@
 <div align="center"> 
   
-# Knowledge-based System (2023): Coarse-To-Fine Fusion for Language Grounding in 3D Navigation
+# Coarse-To-Fine Fusion for Language Grounding in 3D Navigation, Knowledge-based System (2023)
 by [Thanh Tin Nguyen *](https://https://ngthanhtin.github.io/), Anh H. Vo, Soo-Mi Choi, and Yong-Guk Kim. <br/>
 Sejong University, Seoul, Korea <br/> 
 
