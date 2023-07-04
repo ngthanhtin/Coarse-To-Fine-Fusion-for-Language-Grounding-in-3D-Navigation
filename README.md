@@ -70,7 +70,7 @@ To test the trained model, use `--load saved/model_best` in the above commands.
 
 ### Bibtex:
 ```
-@article{zzzzzzzzzzzzzz,
+@article{Updating...,
   title={Coarse-To-Fine Fusion for Language Grounding in 3D Navigation},
   author={Nguyen T.Tin, Anh H. Vo, Soo-Mi Choi, Kim Yong Guk},
   journal={arXiv preprint arXiv:1706.07230},
