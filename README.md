@@ -13,12 +13,13 @@ Sejong University, Seoul, Korea <br/>
 
 
 ### This repository contains:
-- Code for training an A3C-LSTM agent using Coarse-To-Fine Fusion for Language Grounding in 3D Navigation
+- Code for training an A3C-LSTM agent using Coarse-To-Fine Fusion for Language Grounding in 3D Navigation (VizDoom, REVERIE)
 
 ## Dependencies
 - [ViZDoom](https://github.com/mwydmuch/ViZDoom)
+- [REVERIE](https://github.com/YuankaiQi/REVERIE)
 - [PyTorch](http://pytorch.org)
-- Opencv
+- OpenCV
 
 ## Usage
 
@@ -70,10 +71,10 @@ To test the trained model, use `--load saved/model_best` in the above commands.
 
 ### Bibtex:
 ```
-@article{Updating...,
-  title={Coarse-To-Fine Fusion for Language Grounding in 3D Navigation},
-  author={Nguyen T.Tin, Anh H. Vo, Soo-Mi Choi, Kim Yong Guk},
-  journal={arXiv preprint arXiv:1706.07230},
+@article{Updating..., \
+  title={Coarse-To-Fine Fusion for Language Grounding in 3D Navigation}, \
+  author={Nguyen T.Tin, Anh H. Vo, Soo-Mi Choi, Kim Yong Guk}, \
+  journal={arXiv preprint arXiv:1706.07230}, \
   year={2023}
 }
 ```
