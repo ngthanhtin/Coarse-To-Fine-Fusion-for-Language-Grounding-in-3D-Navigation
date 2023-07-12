@@ -4,7 +4,7 @@
 by [Thanh Tin Nguyen *](https://https://ngthanhtin.github.io/), Anh H. Vo, Soo-Mi Choi, and Yong-Guk Kim. <br/>
 Sejong University, Seoul, Korea <br/> 
 
-[![Paper](https://img.shields.io/badge/paper-arxiv.svg)]()
+[![Paper](https://img.shields.io/badge/paper-arxiv.svg)](https://www.sciencedirect.com/science/article/pii/S095070512300535X?via%3Dihub)
 [![Journal](https://img.shields.io/badge/KBS-2023-4b44ce.svg)](https://www.sciencedirect.com/journal/knowledge-based-systems) <br/>
 ![example1](./docs/example.gif)
 ![example2](./docs/ezgif.com-resize.gif)
@@ -67,7 +67,7 @@ python a3c_main.py --evaluate 2 --load saved/pretrained_model --visualize 1
 To test the trained model, use `--load saved/model_best` in the above commands.
 
 ## Cite as
->Nguyen T.Tin, Anh H. Vo, Soo-Mi Choi, Kim Yong Guk, 2023. Coarse-To-Fine Fusion for Language Grounding in 3D Navigation. arXiv preprint arXiv:1706.07230. ([PDF](None))
+>Nguyen T.Tin, Anh H. Vo, Soo-Mi Choi, Kim Yong Guk, 2023. Coarse-To-Fine Fusion for Language Grounding in 3D Navigation. arXiv preprint arXiv:1706.07230. ([PDF](https://www.sciencedirect.com/science/article/pii/S095070512300535X?via%3Dihub))
 
 ### Bibtex:
 
