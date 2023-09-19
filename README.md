@@ -12,10 +12,7 @@ Sejong University, Seoul, Korea <br/>
 
 
 ### Model
-<div align="center"> 
-![example1](./data/model.png)
-
-</div> 
+![alt text](./data/model.png)
 
 ### This repository contains:
 - Code for training an A3C-LSTM agent using Coarse-To-Fine Fusion for Language Grounding in 3D Navigation (VizDoom, REVERIE)
